@@ -1092,7 +1092,7 @@
               <table>
                 <thead>
                   <tr>
-                    <th style="width: 118px;">配置编号</th>
+                    <th style="width: 156px;">配置名称</th>
                     <th style="width: 92px;">组织</th>
                     <th style="width: 110px;">发货仓</th>
                     <th style="width: 92px;">分类</th>
@@ -1303,6 +1303,10 @@
           <div class="panel-head"><h2>基础信息</h2></div>
           <div class="panel-body">
             <div class="form-grid">
+              <div class="field span-3">
+                <label>配置名称</label>
+                <input id="formName" value="乳品冷链默认排序置顶配置" />
+              </div>
               <div class="field">
                 <label>二级组织</label>
                 <select id="formOrg">
@@ -1419,6 +1423,7 @@
     let configs = [
       {
         id: "SORT20260627001",
+        name: "乳品冷链默认排序置顶配置",
         org: "万昌集团",
         warehouse: "合肥冷链仓",
         category: "cold",
@@ -1432,6 +1437,7 @@
       },
       {
         id: "SORT20260627002",
+        name: "鲜食烘焙默认排序置顶配置",
         org: "万昌集团",
         warehouse: "南京常温仓",
         category: "fresh",
@@ -1446,7 +1452,7 @@
     ];
 
     let logs = [
-      { time: "2026-06-27 21:10", type: "配置保存", text: "SORT20260627001 更新置顶商品 4 个", status: "成功" },
+      { time: "2026-06-27 21:10", type: "配置保存", text: "乳品冷链默认排序置顶配置 更新置顶商品 4 个", status: "成功" },
       { time: "2026-06-24 04:00", type: "定时任务", text: "ABC等级与近28天平均PSD刷新完成，覆盖 18,240 个商品", status: "成功" },
       { time: "2026-06-17 04:00", type: "定时任务", text: "BI PSD接口短暂超时，已保留上一版可用排序", status: "兜底" }
     ];
@@ -1566,7 +1572,7 @@
       $("#configCount").textContent = `${rows.length} 条`;
       $("#configTbody").innerHTML = rows.map((config) => `
         <tr class="${config.id === selectedConfigId ? "selected" : ""}">
-          <td><button class="link" data-select-config="${config.id}">${config.id}</button></td>
+          <td><button class="link" data-open-config="${config.id}" title="${config.id}">${config.name || config.id}</button></td>
           <td>${config.org}</td>
           <td>${config.warehouse || "组织维度"}</td>
           <td>${categoryNames[config.category]}</td>
@@ -1583,11 +1589,12 @@
         </tr>
       `).join("");
 
-      $$("[data-select-config]").forEach((button) => {
+      $$("[data-open-config]").forEach((button) => {
         button.addEventListener("click", () => {
-          selectedConfigId = button.dataset.selectConfig;
+          selectedConfigId = button.dataset.openConfig;
           renderConfigs();
           renderAdminPreview();
+          openDrawer(button.dataset.openConfig);
         });
       });
 
@@ -1615,13 +1622,14 @@
           const copied = {
             ...source,
             id: `SORT${Date.now().toString().slice(-10)}`,
+            name: `${source.name || source.id} 副本`,
             status: "待生效",
             updatedBy: "当前用户",
             updatedAt: nowText()
           };
           configs.unshift(copied);
           selectedConfigId = copied.id;
-          logs.unshift({ time: nowText(), type: "复制配置", text: `${source.id} 已复制为 ${copied.id}`, status: "成功" });
+          logs.unshift({ time: nowText(), type: "复制配置", text: `${source.name || source.id} 已复制为 ${copied.name}`, status: "成功" });
           showToast("已复制为待生效配置");
           renderConfigs();
           renderAdminPreview();
@@ -1678,6 +1686,7 @@
       const source = configs.find((item) => item.id === configId);
       editingConfig = source ? JSON.parse(JSON.stringify(source)) : {
         id: `SORT${Date.now().toString().slice(-10)}`,
+        name: "乳品冷链默认排序置顶配置",
         org: "万昌集团",
         warehouse: "合肥冷链仓",
         category: "cold",
@@ -1691,6 +1700,7 @@
       };
 
       $("#drawerTitle").textContent = source ? "编辑置顶配置" : "新增置顶配置";
+      $("#formName").value = editingConfig.name || editingConfig.id;
       $("#formOrg").value = editingConfig.org;
       $("#formWarehouse").value = editingConfig.warehouse;
       $("#formCategory").value = editingConfig.category;
@@ -1768,6 +1778,7 @@
 
     function saveDrawer() {
       if (!editingConfig) return;
+      editingConfig.name = $("#formName").value.trim() || editingConfig.id;
       editingConfig.org = $("#formOrg").value;
       editingConfig.warehouse = $("#formWarehouse").value;
       editingConfig.category = $("#formCategory").value;
@@ -1781,7 +1792,7 @@
       if (existingIndex >= 0) configs[existingIndex] = editingConfig;
       else configs.unshift(editingConfig);
       selectedConfigId = editingConfig.id;
-      logs.unshift({ time: nowText(), type: "保存配置", text: `${editingConfig.id} 保存置顶商品 ${editingConfig.pinned.length} 个`, status: "成功" });
+      logs.unshift({ time: nowText(), type: "保存配置", text: `${editingConfig.name} 保存置顶商品 ${editingConfig.pinned.length} 个`, status: "成功" });
       closeDrawer();
       renderConfigs();
       renderAdminPreview();
