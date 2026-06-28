@@ -1,0 +1,1976 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>商品默认排序配置 - 前后台交互原型</title>
+  <style>
+    * {
+      box-sizing: border-box;
+    }
+
+    :root {
+      --blue: #2f65ff;
+      --blue-deep: #2347c7;
+      --blue-soft: #eef4ff;
+      --cyan-soft: #e9f7f8;
+      --green: #1f9d55;
+      --green-soft: #eaf7ef;
+      --amber: #d97706;
+      --amber-soft: #fff4df;
+      --red: #df3b3b;
+      --red-soft: #fff0f0;
+      --purple: #6f4fd8;
+      --purple-soft: #f1efff;
+      --bg: #f4f6fa;
+      --panel: #ffffff;
+      --line: #dfe5ef;
+      --line-soft: #edf1f6;
+      --text: #252b33;
+      --muted: #667085;
+      --faint: #98a2b3;
+      --shadow: 0 10px 28px rgba(22, 34, 68, 0.12);
+      --radius: 6px;
+    }
+
+    html,
+    body {
+      height: 100%;
+    }
+
+    body {
+      margin: 0;
+      background: var(--bg);
+      color: var(--text);
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang SC", "Microsoft YaHei", sans-serif;
+      letter-spacing: 0;
+      overflow: hidden;
+    }
+
+    button,
+    input,
+    select,
+    textarea {
+      font: inherit;
+    }
+
+    button {
+      cursor: pointer;
+    }
+
+    .shell {
+      height: 100vh;
+      min-width: 1180px;
+      display: grid;
+      grid-template-columns: 160px 1fr;
+      grid-template-rows: 54px 40px 1fr;
+      background: var(--bg);
+    }
+
+    .topbar {
+      grid-column: 1 / 3;
+      background: var(--blue);
+      color: #fff;
+      height: 54px;
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      padding-right: 18px;
+      box-shadow: 0 1px 3px rgba(18, 32, 68, 0.16);
+      z-index: 30;
+    }
+
+    .brand {
+      width: 160px;
+      height: 54px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 9px;
+      font-size: 17px;
+      font-weight: 800;
+      border-right: 1px solid rgba(255, 255, 255, 0.24);
+      white-space: nowrap;
+    }
+
+    .brand-mark {
+      width: 24px;
+      height: 24px;
+      border-radius: 6px;
+      background: #fff;
+      position: relative;
+    }
+
+    .brand-mark::before {
+      content: "";
+      position: absolute;
+      width: 14px;
+      height: 4px;
+      left: 5px;
+      top: 7px;
+      background: var(--blue);
+      border-radius: 2px;
+      box-shadow: 0 7px 0 var(--blue);
+    }
+
+    .global-search {
+      width: 306px;
+      height: 34px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 0 12px;
+      color: rgba(255, 255, 255, 0.88);
+      background: rgba(255, 255, 255, 0.18);
+      border: 1px solid rgba(255, 255, 255, 0.16);
+      border-radius: 4px;
+      font-size: 13px;
+    }
+
+    .global-search::before {
+      content: "";
+      width: 13px;
+      height: 13px;
+      border: 2px solid rgba(255, 255, 255, 0.78);
+      border-radius: 50%;
+      box-shadow: 7px 7px 0 -6px rgba(255, 255, 255, 0.78);
+      transform: rotate(-15deg);
+    }
+
+    .topbar-spacer {
+      flex: 1;
+    }
+
+    .top-pill {
+      height: 32px;
+      padding: 0 12px;
+      display: flex;
+      align-items: center;
+      border-left: 1px solid rgba(255, 255, 255, 0.24);
+      border-right: 1px solid rgba(255, 255, 255, 0.24);
+      color: rgba(255, 255, 255, 0.92);
+      font-size: 13px;
+      white-space: nowrap;
+    }
+
+    .avatar {
+      width: 32px;
+      height: 32px;
+      display: grid;
+      place-items: center;
+      border-radius: 50%;
+      background: #fff;
+      color: var(--blue);
+      font-weight: 800;
+      font-size: 13px;
+    }
+
+    .tabbar {
+      grid-column: 2 / 3;
+      background: #fff;
+      border-bottom: 1px solid var(--line);
+      display: flex;
+      align-items: center;
+      gap: 4px;
+      padding: 0 12px;
+      z-index: 10;
+    }
+
+    .tab {
+      height: 32px;
+      min-width: 124px;
+      padding: 0 14px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      border: 1px solid transparent;
+      border-radius: 4px 4px 0 0;
+      background: transparent;
+      color: #435064;
+      font-size: 13px;
+    }
+
+    .tab.active {
+      color: var(--blue);
+      background: var(--blue-soft);
+      border-color: #cbd9ff;
+      font-weight: 700;
+    }
+
+    .sidebar {
+      grid-row: 2 / 4;
+      background: #fff;
+      border-right: 1px solid var(--line);
+      overflow: hidden;
+    }
+
+    .side-title {
+      height: 42px;
+      display: flex;
+      align-items: center;
+      padding-left: 18px;
+      color: #1f2733;
+      font-size: 14px;
+      font-weight: 700;
+      border-bottom: 1px solid var(--line-soft);
+    }
+
+    .side-item {
+      height: 44px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 0 14px 0 18px;
+      color: #435064;
+      font-size: 13px;
+      border-left: 3px solid transparent;
+    }
+
+    .side-item.active {
+      color: var(--blue);
+      background: var(--blue-soft);
+      border-left-color: var(--blue);
+      font-weight: 700;
+    }
+
+    .side-dot {
+      width: 7px;
+      height: 7px;
+      border-radius: 50%;
+      background: currentColor;
+      opacity: 0.65;
+    }
+
+    .main {
+      overflow: auto;
+      padding: 12px;
+    }
+
+    .view {
+      display: none;
+    }
+
+    .view.active {
+      display: block;
+    }
+
+    .toolbar {
+      min-height: 52px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      margin-bottom: 10px;
+    }
+
+    .title-block {
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+    }
+
+    .title-block h1 {
+      margin: 0;
+      font-size: 18px;
+      font-weight: 800;
+      line-height: 24px;
+    }
+
+    .subtitle {
+      color: var(--muted);
+      font-size: 12px;
+      line-height: 18px;
+    }
+
+    .actions {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      flex-wrap: wrap;
+      justify-content: flex-end;
+    }
+
+    .btn {
+      height: 32px;
+      border-radius: 4px;
+      border: 1px solid var(--line);
+      background: #fff;
+      color: #344054;
+      padding: 0 12px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+      white-space: nowrap;
+      font-size: 13px;
+    }
+
+    .btn.primary {
+      background: var(--blue);
+      color: #fff;
+      border-color: var(--blue);
+    }
+
+    .btn.danger {
+      color: var(--red);
+      border-color: #ffd3d3;
+      background: var(--red-soft);
+    }
+
+    .btn.ghost {
+      border-color: transparent;
+      background: transparent;
+    }
+
+    .btn:disabled {
+      opacity: 0.45;
+      cursor: not-allowed;
+    }
+
+    .icon-btn {
+      width: 28px;
+      height: 28px;
+      border-radius: 4px;
+      border: 1px solid var(--line);
+      background: #fff;
+      color: #475467;
+      display: inline-grid;
+      place-items: center;
+      font-size: 13px;
+    }
+
+    .filter-panel,
+    .panel {
+      background: var(--panel);
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+    }
+
+    .filter-panel {
+      padding: 12px;
+      margin-bottom: 10px;
+    }
+
+    .filter-grid {
+      display: grid;
+      grid-template-columns: repeat(5, minmax(150px, 1fr));
+      gap: 10px;
+      align-items: end;
+    }
+
+    .field {
+      display: flex;
+      flex-direction: column;
+      gap: 5px;
+      min-width: 0;
+    }
+
+    label {
+      color: #475467;
+      font-size: 12px;
+      line-height: 16px;
+      white-space: nowrap;
+    }
+
+    select,
+    input,
+    textarea {
+      width: 100%;
+      height: 32px;
+      border: 1px solid #cfd8e6;
+      border-radius: 4px;
+      background: #fff;
+      color: var(--text);
+      padding: 0 10px;
+      outline: none;
+      font-size: 13px;
+    }
+
+    textarea {
+      min-height: 68px;
+      padding: 8px 10px;
+      line-height: 18px;
+      resize: vertical;
+    }
+
+    select:focus,
+    input:focus,
+    textarea:focus {
+      border-color: var(--blue);
+      box-shadow: 0 0 0 2px rgba(47, 101, 255, 0.12);
+    }
+
+    .split {
+      display: grid;
+      grid-template-columns: minmax(680px, 1fr) 360px;
+      gap: 10px;
+      align-items: start;
+    }
+
+    .panel-head {
+      min-height: 42px;
+      padding: 0 12px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      border-bottom: 1px solid var(--line-soft);
+      gap: 12px;
+    }
+
+    .panel-head h2 {
+      margin: 0;
+      font-size: 14px;
+      font-weight: 800;
+      color: #1f2733;
+      line-height: 20px;
+    }
+
+    .panel-body {
+      padding: 12px;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      table-layout: fixed;
+      font-size: 12px;
+    }
+
+    th,
+    td {
+      border-bottom: 1px solid var(--line-soft);
+      padding: 9px 8px;
+      text-align: left;
+      vertical-align: middle;
+      height: 38px;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+
+    th {
+      background: #f8fafc;
+      color: #596579;
+      font-weight: 700;
+      border-top: 1px solid var(--line-soft);
+    }
+
+    tr.selected td {
+      background: var(--blue-soft);
+    }
+
+    .link {
+      color: var(--blue);
+      font-weight: 700;
+      background: transparent;
+      border: 0;
+      padding: 0;
+    }
+
+    .tag {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      min-width: 44px;
+      height: 22px;
+      padding: 0 7px;
+      border-radius: 4px;
+      font-size: 12px;
+      line-height: 20px;
+      border: 1px solid transparent;
+      white-space: nowrap;
+    }
+
+    .tag.blue {
+      color: var(--blue);
+      background: var(--blue-soft);
+      border-color: #cbd9ff;
+    }
+
+    .tag.green {
+      color: var(--green);
+      background: var(--green-soft);
+      border-color: #bfe9ce;
+    }
+
+    .tag.amber {
+      color: var(--amber);
+      background: var(--amber-soft);
+      border-color: #ffd99a;
+    }
+
+    .tag.red {
+      color: var(--red);
+      background: var(--red-soft);
+      border-color: #ffcaca;
+    }
+
+    .tag.purple {
+      color: var(--purple);
+      background: var(--purple-soft);
+      border-color: #dad3ff;
+    }
+
+    .tag.gray {
+      color: #596579;
+      background: #f2f4f7;
+      border-color: #e4e7ec;
+    }
+
+    .summary-grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 8px;
+    }
+
+    .metric {
+      border: 1px solid var(--line-soft);
+      border-radius: 6px;
+      background: #fbfcfe;
+      padding: 10px;
+      min-height: 66px;
+    }
+
+    .metric strong {
+      display: block;
+      font-size: 20px;
+      line-height: 24px;
+      margin-bottom: 4px;
+    }
+
+    .metric span {
+      color: var(--muted);
+      font-size: 12px;
+      line-height: 16px;
+    }
+
+    .rule-list {
+      margin: 0;
+      padding: 0;
+      list-style: none;
+      display: grid;
+      gap: 8px;
+    }
+
+    .rule-list li {
+      display: grid;
+      grid-template-columns: 28px 1fr;
+      gap: 8px;
+      align-items: start;
+      border: 1px solid var(--line-soft);
+      background: #fbfcfe;
+      border-radius: 6px;
+      padding: 9px;
+      font-size: 12px;
+      line-height: 18px;
+    }
+
+    .rank {
+      width: 24px;
+      height: 24px;
+      border-radius: 4px;
+      display: grid;
+      place-items: center;
+      color: #fff;
+      background: var(--blue);
+      font-size: 12px;
+      font-weight: 800;
+    }
+
+    .muted {
+      color: var(--muted);
+    }
+
+    .app-layout {
+      display: grid;
+      grid-template-columns: minmax(520px, 1fr) 390px;
+      gap: 14px;
+      align-items: start;
+    }
+
+    .phone {
+      width: 378px;
+      height: 720px;
+      border: 1px solid #c9d2e3;
+      border-radius: 28px;
+      background: #111827;
+      padding: 12px;
+      box-shadow: var(--shadow);
+      margin: 0 auto;
+    }
+
+    .phone-screen {
+      height: 100%;
+      border-radius: 20px;
+      background: #f6f7fb;
+      overflow: hidden;
+      display: grid;
+      grid-template-rows: 46px 92px 46px 1fr 62px;
+    }
+
+    .app-head {
+      background: #fff;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 0 14px;
+      border-bottom: 1px solid var(--line-soft);
+    }
+
+    .app-head-title {
+      flex: 1;
+      text-align: center;
+      font-weight: 800;
+      font-size: 15px;
+      margin-right: 28px;
+    }
+
+    .app-store {
+      background: #fff;
+      padding: 9px 12px;
+      border-bottom: 1px solid var(--line-soft);
+      display: grid;
+      gap: 8px;
+    }
+
+    .store-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 8px;
+      font-size: 12px;
+      color: var(--muted);
+    }
+
+    .store-row strong {
+      color: var(--text);
+      font-size: 14px;
+    }
+
+    .search-box {
+      height: 34px;
+      border-radius: 6px;
+      background: #f2f4f7;
+      color: #8a94a6;
+      display: flex;
+      align-items: center;
+      padding: 0 10px;
+      font-size: 12px;
+    }
+
+    .app-sort {
+      background: #fff;
+      padding: 7px 8px;
+      display: flex;
+      gap: 6px;
+      overflow-x: auto;
+      border-bottom: 1px solid var(--line-soft);
+    }
+
+    .sort-chip {
+      flex: 0 0 auto;
+      height: 30px;
+      padding: 0 10px;
+      border-radius: 15px;
+      border: 1px solid var(--line);
+      background: #fff;
+      color: #475467;
+      font-size: 12px;
+    }
+
+    .sort-chip.active {
+      background: var(--blue);
+      border-color: var(--blue);
+      color: #fff;
+      font-weight: 700;
+    }
+
+    .product-list {
+      overflow-y: auto;
+      padding: 8px;
+      display: grid;
+      gap: 8px;
+      align-content: start;
+    }
+
+    .product {
+      background: #fff;
+      border: 1px solid var(--line-soft);
+      border-radius: 8px;
+      padding: 9px;
+      display: grid;
+      grid-template-columns: 58px 1fr;
+      gap: 10px;
+      min-height: 106px;
+    }
+
+    .product-thumb {
+      width: 58px;
+      height: 58px;
+      border-radius: 6px;
+      background: linear-gradient(135deg, #eaf2ff, #e9f7f8);
+      border: 1px solid #d7e4f6;
+      display: grid;
+      place-items: center;
+      color: var(--blue);
+      font-weight: 800;
+      font-size: 18px;
+    }
+
+    .product-main {
+      min-width: 0;
+      display: grid;
+      gap: 5px;
+    }
+
+    .product-name {
+      display: flex;
+      align-items: center;
+      gap: 5px;
+      min-width: 0;
+      font-size: 13px;
+      font-weight: 800;
+      line-height: 18px;
+    }
+
+    .product-name span:last-child {
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+
+    .product-meta {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 4px;
+      color: var(--muted);
+      font-size: 11px;
+      line-height: 16px;
+    }
+
+    .price-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 8px;
+      margin-top: 2px;
+    }
+
+    .price {
+      color: #d92d20;
+      font-size: 15px;
+      font-weight: 800;
+    }
+
+    .add {
+      width: 28px;
+      height: 28px;
+      display: grid;
+      place-items: center;
+      border: 0;
+      border-radius: 50%;
+      background: var(--blue);
+      color: #fff;
+      font-size: 20px;
+      line-height: 1;
+    }
+
+    .bottom-nav {
+      background: #fff;
+      border-top: 1px solid var(--line-soft);
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      align-items: center;
+    }
+
+    .nav-item {
+      text-align: center;
+      color: var(--muted);
+      font-size: 11px;
+      line-height: 16px;
+    }
+
+    .nav-item.active {
+      color: var(--blue);
+      font-weight: 700;
+    }
+
+    .category-rail {
+      display: grid;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      gap: 8px;
+      margin-bottom: 10px;
+    }
+
+    .category-card {
+      height: 74px;
+      border: 1px solid var(--line);
+      border-radius: 6px;
+      background: #fff;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      gap: 6px;
+      padding: 0 12px;
+      cursor: pointer;
+    }
+
+    .category-card.active {
+      border-color: var(--blue);
+      background: var(--blue-soft);
+      color: var(--blue);
+    }
+
+    .category-card strong {
+      font-size: 14px;
+      line-height: 18px;
+    }
+
+    .category-card span {
+      color: var(--muted);
+      font-size: 12px;
+      line-height: 16px;
+    }
+
+    .control-grid {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(160px, 1fr));
+      gap: 10px;
+      margin-bottom: 10px;
+    }
+
+    .notice {
+      border: 1px solid #ffd99a;
+      background: var(--amber-soft);
+      color: #8a4b00;
+      border-radius: 6px;
+      padding: 9px 10px;
+      font-size: 12px;
+      line-height: 18px;
+      margin-bottom: 10px;
+    }
+
+    .preview-list {
+      display: grid;
+      gap: 8px;
+    }
+
+    .preview-item {
+      border: 1px solid var(--line-soft);
+      border-radius: 6px;
+      padding: 9px;
+      background: #fbfcfe;
+      display: grid;
+      gap: 6px;
+      font-size: 12px;
+      line-height: 18px;
+    }
+
+    .preview-item.filtered {
+      background: #fff7f7;
+      border-color: #ffd1d1;
+    }
+
+    .drawer-mask {
+      position: fixed;
+      inset: 0;
+      background: rgba(16, 24, 40, 0.36);
+      display: none;
+      justify-content: flex-end;
+      z-index: 100;
+    }
+
+    .drawer-mask.show {
+      display: flex;
+    }
+
+    .drawer {
+      width: 720px;
+      max-width: calc(100vw - 160px);
+      height: 100%;
+      background: #fff;
+      display: grid;
+      grid-template-rows: 54px 1fr 56px;
+      box-shadow: var(--shadow);
+    }
+
+    .drawer-head {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 16px;
+      border-bottom: 1px solid var(--line);
+    }
+
+    .drawer-head h2 {
+      margin: 0;
+      font-size: 16px;
+      line-height: 22px;
+    }
+
+    .drawer-body {
+      overflow: auto;
+      padding: 14px 16px;
+      display: grid;
+      gap: 14px;
+      align-content: start;
+    }
+
+    .drawer-foot {
+      display: flex;
+      align-items: center;
+      justify-content: flex-end;
+      gap: 8px;
+      padding: 0 16px;
+      border-top: 1px solid var(--line);
+      background: #fbfcfe;
+    }
+
+    .form-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 10px;
+    }
+
+    .span-3 {
+      grid-column: 1 / 4;
+    }
+
+    .sku-pool {
+      display: grid;
+      grid-template-columns: 1fr auto;
+      gap: 8px;
+      align-items: end;
+    }
+
+    .toast {
+      position: fixed;
+      left: 50%;
+      bottom: 28px;
+      transform: translateX(-50%);
+      min-width: 240px;
+      height: 38px;
+      display: none;
+      align-items: center;
+      justify-content: center;
+      padding: 0 16px;
+      border-radius: 6px;
+      background: rgba(16, 24, 40, 0.9);
+      color: #fff;
+      font-size: 13px;
+      z-index: 120;
+    }
+
+    .toast.show {
+      display: flex;
+    }
+
+    .log-list {
+      display: grid;
+      gap: 8px;
+      max-height: 520px;
+      overflow: auto;
+    }
+
+    .log-row {
+      display: grid;
+      grid-template-columns: 120px 1fr auto;
+      gap: 10px;
+      align-items: center;
+      border: 1px solid var(--line-soft);
+      border-radius: 6px;
+      background: #fff;
+      padding: 10px;
+      font-size: 12px;
+      line-height: 18px;
+    }
+
+    @media (max-width: 1280px) {
+      .filter-grid {
+        grid-template-columns: repeat(3, minmax(150px, 1fr));
+      }
+
+      .split,
+      .app-layout {
+        grid-template-columns: 1fr;
+      }
+
+      .phone {
+        margin: 0;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="shell">
+    <header class="topbar">
+      <div class="brand"><span class="brand-mark"></span><span>新零帮ERP</span></div>
+      <div class="global-search">搜索菜单、单据、商品</div>
+      <div class="topbar-spacer"></div>
+      <div class="top-pill">万昌集团 / 配送中心</div>
+      <div class="avatar">王</div>
+    </header>
+
+    <aside class="sidebar">
+      <div class="side-title">配送</div>
+      <div class="side-item"><span class="side-dot"></span>业务操作</div>
+      <div class="side-item active"><span class="side-dot"></span>业务设置</div>
+      <div class="side-item"><span class="side-dot"></span>配送特价</div>
+      <div class="side-item"><span class="side-dot"></span>门店订单</div>
+      <div class="side-item"><span class="side-dot"></span>报表分析</div>
+    </aside>
+
+    <nav class="tabbar">
+      <button class="tab active" data-view="adminView">PC后台配置</button>
+      <button class="tab" data-view="appView">APP分类页</button>
+      <button class="tab" data-view="logView">规则与日志</button>
+    </nav>
+
+    <main class="main">
+      <section id="adminView" class="view active">
+        <div class="toolbar">
+          <div class="title-block">
+            <h1>商品默认排序配置</h1>
+            <div class="subtitle">维护分类页人工置顶商品，并预览不同门店的默认排序结果</div>
+          </div>
+          <div class="actions">
+            <button class="btn" id="adminPreviewBtn">预览门店差异</button>
+            <button class="btn" id="openLogBtn">运行日志</button>
+            <button class="btn primary" id="addConfigBtn">+ 新增置顶配置</button>
+          </div>
+        </div>
+
+        <div class="filter-panel">
+          <div class="filter-grid">
+            <div class="field">
+              <label>二级组织</label>
+              <select id="filterOrg">
+                <option>万昌集团</option>
+                <option>华东事业部</option>
+              </select>
+            </div>
+            <div class="field">
+              <label>发货仓 / 配送中心</label>
+              <select id="filterWarehouse">
+                <option value="">全部</option>
+                <option>合肥冷链仓</option>
+                <option>南京常温仓</option>
+              </select>
+            </div>
+            <div class="field">
+              <label>商品分类</label>
+              <select id="filterCategory">
+                <option value="">全部</option>
+                <option value="cold">乳品冷链</option>
+                <option value="fresh">鲜食烘焙</option>
+              </select>
+            </div>
+            <div class="field">
+              <label>状态</label>
+              <select id="filterStatus">
+                <option value="">全部</option>
+                <option>生效中</option>
+                <option>待生效</option>
+                <option>已停用</option>
+              </select>
+            </div>
+            <div class="actions">
+              <button class="btn primary" id="queryBtn">查询</button>
+              <button class="btn" id="resetBtn">重置</button>
+              <button class="btn">导出</button>
+            </div>
+          </div>
+        </div>
+
+        <div class="split">
+          <div class="panel">
+            <div class="panel-head">
+              <h2>配置列表</h2>
+              <span class="tag blue" id="configCount">0 条</span>
+            </div>
+            <div class="panel-body">
+              <table>
+                <thead>
+                  <tr>
+                    <th style="width: 118px;">配置编号</th>
+                    <th style="width: 92px;">组织</th>
+                    <th style="width: 110px;">发货仓</th>
+                    <th style="width: 92px;">分类</th>
+                    <th style="width: 82px;">置顶数</th>
+                    <th style="width: 150px;">生效时间</th>
+                    <th style="width: 80px;">状态</th>
+                    <th style="width: 142px;">操作</th>
+                  </tr>
+                </thead>
+                <tbody id="configTbody"></tbody>
+              </table>
+            </div>
+          </div>
+
+          <div class="panel">
+            <div class="panel-head">
+              <h2>门店排序预览</h2>
+              <select id="previewStore" style="width: 148px;">
+                <option value="tc">天长门店</option>
+                <option value="cn">城南门店</option>
+                <option value="xk">新开门店</option>
+              </select>
+            </div>
+            <div class="panel-body">
+              <div class="summary-grid" style="margin-bottom: 10px;">
+                <div class="metric">
+                  <strong id="pinnedVisible">0</strong>
+                  <span>可见置顶 SKU</span>
+                </div>
+                <div class="metric">
+                  <strong id="pinnedFiltered">0</strong>
+                  <span>被过滤 SKU</span>
+                </div>
+              </div>
+              <div id="adminPreviewList" class="preview-list"></div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section id="appView" class="view">
+        <div class="toolbar">
+          <div class="title-block">
+            <h1>APP 门店补货商城分类页</h1>
+            <div class="subtitle">演示默认排序、手动排序覆盖、门店差异，以及端堆 / 特价不受本规则影响</div>
+          </div>
+          <div class="actions">
+            <button class="btn" id="restoreDefaultBtn">恢复默认排序</button>
+            <button class="btn primary" id="syncPreviewBtn">同步后台置顶预览</button>
+          </div>
+        </div>
+
+        <div class="app-layout">
+          <div>
+            <div class="control-grid">
+              <div class="field">
+                <label>门店</label>
+                <select id="appStore">
+                  <option value="tc">天长门店</option>
+                  <option value="cn">城南门店</option>
+                  <option value="xk">新开门店</option>
+                </select>
+              </div>
+              <div class="field">
+                <label>发货仓</label>
+                <select id="appWarehouse">
+                  <option>合肥冷链仓</option>
+                  <option>南京常温仓</option>
+                </select>
+              </div>
+              <div class="field">
+                <label>排序方式</label>
+                <select id="appSortSelect">
+                  <option value="default">默认排序</option>
+                  <option value="psd">PSD从高到低</option>
+                  <option value="priceAsc">价格从低到高</option>
+                  <option value="stockDesc">库存从高到低</option>
+                  <option value="newest">最新上新</option>
+                </select>
+              </div>
+            </div>
+
+            <div class="category-rail">
+              <div class="category-card active" data-app-category="cold">
+                <strong>乳品冷链</strong>
+                <span>应用人工置顶 + ABC + PSD</span>
+              </div>
+              <div class="category-card" data-app-category="endcap">
+                <strong>端堆商品</strong>
+                <span>按端架 / 地堆编号</span>
+              </div>
+              <div class="category-card" data-app-category="special">
+                <strong>特价专区</strong>
+                <span>按特价时间</span>
+              </div>
+              <div class="category-card" data-app-category="overdue">
+                <strong>超期未订</strong>
+                <span>沿用现有规则</span>
+              </div>
+            </div>
+
+            <div class="notice" id="sortNotice">当前为默认排序：人工置顶 > ABC等级 > 近28天平均PSD > 新品时间兜底。</div>
+
+            <div class="panel">
+              <div class="panel-head">
+                <h2>排序结果解释</h2>
+                <span class="tag gray" id="resultCount">0 个商品</span>
+              </div>
+              <div class="panel-body">
+                <table>
+                  <thead>
+                    <tr>
+                      <th style="width: 52px;">位次</th>
+                      <th>商品</th>
+                      <th style="width: 76px;">排序来源</th>
+                      <th style="width: 76px;">ABC</th>
+                      <th style="width: 90px;">PSD</th>
+                      <th style="width: 84px;">库存</th>
+                    </tr>
+                  </thead>
+                  <tbody id="appExplainTbody"></tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+
+          <div class="phone">
+            <div class="phone-screen">
+              <div class="app-head">
+                <button class="btn ghost" style="width: 28px; padding: 0;">‹</button>
+                <div class="app-head-title">门店补货</div>
+              </div>
+              <div class="app-store">
+                <div class="store-row">
+                  <strong id="phoneStoreName">天长门店</strong>
+                  <span id="phoneWarehouseName">合肥冷链仓</span>
+                </div>
+                <div class="search-box">搜索商品名称 / 条码 / 分类</div>
+              </div>
+              <div class="app-sort">
+                <button class="sort-chip active" data-phone-sort="default">默认</button>
+                <button class="sort-chip" data-phone-sort="psd">PSD</button>
+                <button class="sort-chip" data-phone-sort="priceAsc">价格</button>
+                <button class="sort-chip" data-phone-sort="stockDesc">库存</button>
+                <button class="sort-chip" data-phone-sort="newest">最新</button>
+              </div>
+              <div class="product-list" id="phoneProducts"></div>
+              <div class="bottom-nav">
+                <div class="nav-item">首页</div>
+                <div class="nav-item active">分类</div>
+                <div class="nav-item">采购车</div>
+                <div class="nav-item">我的</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section id="logView" class="view">
+        <div class="toolbar">
+          <div class="title-block">
+            <h1>规则预览与运行日志</h1>
+            <div class="subtitle">展示排序任务、配置变更和失败兜底结果</div>
+          </div>
+          <div class="actions">
+            <button class="btn primary" id="runJobBtn">模拟周一 4:00 更新</button>
+          </div>
+        </div>
+
+        <div class="split">
+          <div class="panel">
+            <div class="panel-head">
+              <h2>默认排序规则</h2>
+            </div>
+            <div class="panel-body">
+              <ul class="rule-list">
+                <li><span class="rank">1</span><span>普通分类页先展示人工置顶商品；置顶商品按门店可见范围、停要 / 停售、经营范围和发货仓过滤。</span></li>
+                <li><span class="rank">2</span><span>非置顶商品按 ABC 等级排序，A 高于 B，B 高于 C，未分级商品低于 C。</span></li>
+                <li><span class="rank">3</span><span>同等级商品按近 28 天销售额平均 PSD 降序，PSD 以 BI 口径为准。</span></li>
+                <li><span class="rank">4</span><span>无 ABC 分级商品按建档 / 上新时间兜底；该字段排序权重低，最终字段需评审确认。</span></li>
+                <li><span class="rank">5</span><span>端堆、特价、超期未订、搜索、采购车和结算页沿用既有排序，不套本规则。</span></li>
+              </ul>
+            </div>
+          </div>
+
+          <div class="panel">
+            <div class="panel-head">
+              <h2>运行与操作日志</h2>
+              <span class="tag green">本地模拟</span>
+            </div>
+            <div class="panel-body">
+              <div class="log-list" id="logList"></div>
+            </div>
+          </div>
+        </div>
+      </section>
+    </main>
+  </div>
+
+  <div class="drawer-mask" id="drawerMask">
+    <div class="drawer" role="dialog" aria-modal="true" aria-labelledby="drawerTitle">
+      <div class="drawer-head">
+        <h2 id="drawerTitle">新增置顶配置</h2>
+        <button class="icon-btn" id="closeDrawerBtn" aria-label="关闭">×</button>
+      </div>
+      <div class="drawer-body">
+        <div class="panel">
+          <div class="panel-head"><h2>基础信息</h2></div>
+          <div class="panel-body">
+            <div class="form-grid">
+              <div class="field">
+                <label>二级组织</label>
+                <select id="formOrg">
+                  <option>万昌集团</option>
+                  <option>华东事业部</option>
+                </select>
+              </div>
+              <div class="field">
+                <label>发货仓 / 配送中心</label>
+                <select id="formWarehouse">
+                  <option>合肥冷链仓</option>
+                  <option>南京常温仓</option>
+                </select>
+              </div>
+              <div class="field">
+                <label>商品分类</label>
+                <select id="formCategory">
+                  <option value="cold">乳品冷链</option>
+                  <option value="fresh">鲜食烘焙</option>
+                </select>
+              </div>
+              <div class="field">
+                <label>生效开始时间</label>
+                <input id="formStart" value="2026-06-30 00:00" />
+              </div>
+              <div class="field">
+                <label>生效结束时间</label>
+                <input id="formEnd" value="长期" />
+              </div>
+              <div class="field">
+                <label>置顶上限</label>
+                <input id="formLimit" value="10" />
+              </div>
+              <div class="field span-3">
+                <label>备注</label>
+                <textarea id="formRemark">试点分类默认排序，置顶 A 级重点商品。</textarea>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="panel">
+          <div class="panel-head">
+            <h2>置顶商品明细</h2>
+            <span class="tag blue" id="drawerSkuCount">0 / 10</span>
+          </div>
+          <div class="panel-body">
+            <div class="sku-pool" style="margin-bottom: 10px;">
+              <div class="field">
+                <label>添加商品</label>
+                <select id="skuSelect"></select>
+              </div>
+              <button class="btn primary" id="addSkuBtn">添加</button>
+            </div>
+            <table>
+              <thead>
+                <tr>
+                  <th style="width: 52px;">顺序</th>
+                  <th>商品</th>
+                  <th style="width: 68px;">ABC</th>
+                  <th style="width: 84px;">PSD</th>
+                  <th style="width: 74px;">状态</th>
+                  <th style="width: 112px;">操作</th>
+                </tr>
+              </thead>
+              <tbody id="drawerSkuTbody"></tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+      <div class="drawer-foot">
+        <button class="btn" id="cancelDrawerBtn">取消</button>
+        <button class="btn primary" id="saveConfigBtn">保存配置</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="toast" id="toast">已保存</div>
+
+  <script>
+    const stores = {
+      tc: { name: "天长门店", code: "ST001" },
+      cn: { name: "城南门店", code: "ST018" },
+      xk: { name: "新开门店", code: "ST099" }
+    };
+
+    const categoryNames = {
+      cold: "乳品冷链",
+      fresh: "鲜食烘焙",
+      endcap: "端堆商品",
+      special: "特价专区",
+      overdue: "超期未订"
+    };
+
+    const products = [
+      { id: "P001", name: "鲜牛奶 950ml", category: "cold", abc: "A", psd: { tc: 2380, cn: 1960, xk: 1180 }, price: 12.8, stock: { tc: 88, cn: 42, xk: 30 }, created: "2026-03-12", visible: {}, glyph: "奶" },
+      { id: "P002", name: "原味酸奶 12杯装", category: "cold", abc: "A", psd: { tc: 2210, cn: 2480, xk: 980 }, price: 29.9, stock: { tc: 60, cn: 34, xk: 18 }, created: "2026-04-06", visible: {}, glyph: "酸" },
+      { id: "P003", name: "高钙低脂奶 250ml", category: "cold", abc: "B", psd: { tc: 1430, cn: 1320, xk: 620 }, price: 4.9, stock: { tc: 106, cn: 76, xk: 24 }, created: "2026-02-18", visible: {}, glyph: "钙" },
+      { id: "P004", name: "儿童成长奶 200ml", category: "cold", abc: "B", psd: { tc: 1280, cn: 990, xk: 510 }, price: 5.6, stock: { tc: 24, cn: 15, xk: 0 }, created: "2026-01-10", visible: { xk: "门店停要" }, glyph: "童" },
+      { id: "P005", name: "燕麦植物奶 1L", category: "cold", abc: "C", psd: { tc: 760, cn: 1180, xk: 820 }, price: 16.8, stock: { tc: 32, cn: 66, xk: 20 }, created: "2025-12-21", visible: {}, glyph: "燕" },
+      { id: "P006", name: "冷萃咖啡奶 300ml", category: "cold", abc: "", psd: { tc: 0, cn: 0, xk: 0 }, price: 9.9, stock: { tc: 40, cn: 20, xk: 14 }, created: "2026-06-21", visible: {}, glyph: "新" },
+      { id: "P007", name: "草莓酸奶饮品", category: "cold", abc: "C", psd: { tc: 680, cn: 520, xk: 230 }, price: 6.6, stock: { tc: 35, cn: 22, xk: 8 }, created: "2026-05-02", visible: { cn: "门店停售" }, glyph: "莓" },
+      { id: "P008", name: "无糖希腊酸奶", category: "cold", abc: "", psd: { tc: 0, cn: 0, xk: 0 }, price: 13.6, stock: { tc: 20, cn: 16, xk: 10 }, created: "2026-06-25", visible: {}, glyph: "希" },
+      { id: "E001", name: "端架1号 纯牛奶", category: "endcap", abc: "A", psd: { tc: 2380, cn: 1960, xk: 1180 }, price: 12.8, stock: { tc: 88, cn: 42, xk: 30 }, endcapNo: 1, created: "2026-03-12", visible: {}, glyph: "端" },
+      { id: "E002", name: "地堆2号 酸奶组合", category: "endcap", abc: "B", psd: { tc: 1430, cn: 1320, xk: 620 }, price: 39.9, stock: { tc: 40, cn: 52, xk: 18 }, endcapNo: 2, created: "2026-02-18", visible: {}, glyph: "堆" },
+      { id: "E003", name: "端架3号 儿童奶", category: "endcap", abc: "B", psd: { tc: 1280, cn: 990, xk: 510 }, price: 5.6, stock: { tc: 24, cn: 15, xk: 0 }, endcapNo: 3, created: "2026-01-10", visible: {}, glyph: "端" },
+      { id: "S001", name: "临期特价 酸奶饮品", category: "special", abc: "C", psd: { tc: 680, cn: 520, xk: 230 }, price: 3.9, stock: { tc: 18, cn: 12, xk: 4 }, specialTime: "2026-06-27 09:30", created: "2026-05-02", visible: {}, glyph: "特" },
+      { id: "S002", name: "批次特价 高钙奶", category: "special", abc: "B", psd: { tc: 1430, cn: 1320, xk: 620 }, price: 3.6, stock: { tc: 28, cn: 22, xk: 6 }, specialTime: "2026-06-26 18:10", created: "2026-02-18", visible: {}, glyph: "特" },
+      { id: "S003", name: "周末特价 植物奶", category: "special", abc: "C", psd: { tc: 760, cn: 1180, xk: 820 }, price: 12.9, stock: { tc: 26, cn: 30, xk: 8 }, specialTime: "2026-06-25 11:00", created: "2025-12-21", visible: {}, glyph: "特" },
+      { id: "O001", name: "超期未订 鲜牛奶", category: "overdue", abc: "A", psd: { tc: 2380, cn: 1960, xk: 1180 }, price: 12.8, stock: { tc: 88, cn: 42, xk: 30 }, overdueDays: 4, created: "2026-03-12", visible: {}, glyph: "订" },
+      { id: "O002", name: "超期未订 希腊酸奶", category: "overdue", abc: "", psd: { tc: 0, cn: 0, xk: 0 }, price: 13.6, stock: { tc: 20, cn: 16, xk: 10 }, overdueDays: 2, created: "2026-06-25", visible: {}, glyph: "订" }
+    ];
+
+    let configs = [
+      {
+        id: "SORT20260627001",
+        org: "万昌集团",
+        warehouse: "合肥冷链仓",
+        category: "cold",
+        status: "生效中",
+        start: "2026-06-30",
+        end: "长期",
+        limit: 10,
+        pinned: ["P002", "P001", "P006", "P004"],
+        updatedBy: "王敏",
+        updatedAt: "2026-06-27 21:10"
+      },
+      {
+        id: "SORT20260627002",
+        org: "万昌集团",
+        warehouse: "南京常温仓",
+        category: "fresh",
+        status: "待生效",
+        start: "2026-07-01",
+        end: "长期",
+        limit: 10,
+        pinned: [],
+        updatedBy: "马正安",
+        updatedAt: "2026-06-27 18:40"
+      }
+    ];
+
+    let logs = [
+      { time: "2026-06-27 21:10", type: "配置保存", text: "SORT20260627001 更新置顶商品 4 个", status: "成功" },
+      { time: "2026-06-24 04:00", type: "定时任务", text: "ABC等级与近28天平均PSD刷新完成，覆盖 18,240 个商品", status: "成功" },
+      { time: "2026-06-17 04:00", type: "定时任务", text: "BI PSD接口短暂超时，已保留上一版可用排序", status: "兜底" }
+    ];
+
+    let selectedConfigId = configs[0].id;
+    let editingConfig = null;
+    let activeAppCategory = "cold";
+    let activeSort = "default";
+
+    const $ = (selector) => document.querySelector(selector);
+    const $$ = (selector) => Array.from(document.querySelectorAll(selector));
+
+    function getProduct(id) {
+      return products.find((item) => item.id === id);
+    }
+
+    function showToast(text) {
+      const toast = $("#toast");
+      toast.textContent = text;
+      toast.classList.add("show");
+      window.setTimeout(() => toast.classList.remove("show"), 1800);
+    }
+
+    function abcRank(abc) {
+      return { A: 1, B: 2, C: 3, "": 4 }[abc] || 4;
+    }
+
+    function getActiveConfig(category = "cold", warehouse = "合肥冷链仓") {
+      return configs.find((config) => config.status === "生效中" && config.category === category && config.warehouse === warehouse) || configs.find((config) => config.status === "生效中" && config.category === category);
+    }
+
+    function isVisible(product, storeKey) {
+      return !product.visible?.[storeKey];
+    }
+
+    function visibilityReason(product, storeKey) {
+      return product.visible?.[storeKey] || "";
+    }
+
+    function getSortedProducts(category, storeKey, sortMode, warehouse) {
+      const base = products.filter((item) => item.category === category && isVisible(item, storeKey));
+
+      if (category === "endcap") {
+        return base.slice().sort((a, b) => (a.endcapNo || 999) - (b.endcapNo || 999)).map((item, index) => ({ ...item, source: "端堆编号", position: index + 1 }));
+      }
+
+      if (category === "special") {
+        return base.slice().sort((a, b) => String(b.specialTime || "").localeCompare(String(a.specialTime || ""))).map((item, index) => ({ ...item, source: "特价时间", position: index + 1 }));
+      }
+
+      if (category === "overdue") {
+        return base.slice().sort((a, b) => (b.overdueDays || 0) - (a.overdueDays || 0)).map((item, index) => ({ ...item, source: "超期未订", position: index + 1 }));
+      }
+
+      if (sortMode !== "default") {
+        return base.slice().sort((a, b) => {
+          if (sortMode === "psd") return (b.psd[storeKey] || 0) - (a.psd[storeKey] || 0);
+          if (sortMode === "priceAsc") return a.price - b.price;
+          if (sortMode === "stockDesc") return (b.stock[storeKey] || 0) - (a.stock[storeKey] || 0);
+          if (sortMode === "newest") return String(b.created).localeCompare(String(a.created));
+          return 0;
+        }).map((item, index) => ({ ...item, source: "手动排序", position: index + 1 }));
+      }
+
+      const config = getActiveConfig(category, warehouse);
+      const pinnedIds = config?.pinned || [];
+      const pinned = pinnedIds.map(getProduct).filter(Boolean).filter((item) => item.category === category && isVisible(item, storeKey));
+      const pinnedSet = new Set(pinned.map((item) => item.id));
+      const normal = base.filter((item) => !pinnedSet.has(item.id)).sort((a, b) => {
+        const abcDiff = abcRank(a.abc) - abcRank(b.abc);
+        if (abcDiff !== 0) return abcDiff;
+        const psdDiff = (b.psd[storeKey] || 0) - (a.psd[storeKey] || 0);
+        if (psdDiff !== 0) return psdDiff;
+        const createdDiff = String(b.created).localeCompare(String(a.created));
+        if (createdDiff !== 0) return createdDiff;
+        return a.id.localeCompare(b.id);
+      });
+
+      return pinned.map((item, index) => ({ ...item, source: "人工置顶", position: index + 1 })).concat(
+        normal.map((item, index) => ({
+          ...item,
+          source: item.abc ? "ABC+PSD" : "新品兜底",
+          position: pinned.length + index + 1
+        }))
+      );
+    }
+
+    function renderTabs() {
+      $$(".tab").forEach((tab) => {
+        tab.addEventListener("click", () => {
+          $$(".tab").forEach((item) => item.classList.remove("active"));
+          $$(".view").forEach((item) => item.classList.remove("active"));
+          tab.classList.add("active");
+          $("#" + tab.dataset.view).classList.add("active");
+          if (tab.dataset.view === "appView") renderApp();
+          if (tab.dataset.view === "logView") renderLogs();
+        });
+      });
+    }
+
+    function switchTo(viewId) {
+      const tab = $(`.tab[data-view="${viewId}"]`);
+      if (tab) tab.click();
+    }
+
+    function renderConfigs() {
+      const status = $("#filterStatus").value;
+      const category = $("#filterCategory").value;
+      const warehouse = $("#filterWarehouse").value;
+      const rows = configs.filter((config) => {
+        if (status && config.status !== status) return false;
+        if (category && config.category !== category) return false;
+        if (warehouse && config.warehouse !== warehouse) return false;
+        return true;
+      });
+
+      $("#configCount").textContent = `${rows.length} 条`;
+      $("#configTbody").innerHTML = rows.map((config) => `
+        <tr class="${config.id === selectedConfigId ? "selected" : ""}">
+          <td><button class="link" data-select-config="${config.id}">${config.id}</button></td>
+          <td>${config.org}</td>
+          <td>${config.warehouse || "组织维度"}</td>
+          <td>${categoryNames[config.category]}</td>
+          <td>${config.pinned.length} / ${config.limit}</td>
+          <td>${config.start} - ${config.end}</td>
+          <td>${statusTag(config.status)}</td>
+          <td>
+            <button class="link" data-edit-config="${config.id}">编辑</button>
+            <span class="muted"> | </span>
+            <button class="link" data-stop-config="${config.id}">停用</button>
+            <span class="muted"> | </span>
+            <button class="link" data-copy-config="${config.id}">复制</button>
+          </td>
+        </tr>
+      `).join("");
+
+      $$("[data-select-config]").forEach((button) => {
+        button.addEventListener("click", () => {
+          selectedConfigId = button.dataset.selectConfig;
+          renderConfigs();
+          renderAdminPreview();
+        });
+      });
+
+      $$("[data-edit-config]").forEach((button) => {
+        button.addEventListener("click", () => openDrawer(button.dataset.editConfig));
+      });
+
+      $$("[data-stop-config]").forEach((button) => {
+        button.addEventListener("click", () => {
+          const config = configs.find((item) => item.id === button.dataset.stopConfig);
+          if (!config) return;
+          config.status = "已停用";
+          logs.unshift({ time: nowText(), type: "停用配置", text: `${config.id} 已停用`, status: "成功" });
+          showToast("配置已停用");
+          renderConfigs();
+          renderAdminPreview();
+          renderLogs();
+        });
+      });
+
+      $$("[data-copy-config]").forEach((button) => {
+        button.addEventListener("click", () => {
+          const source = configs.find((item) => item.id === button.dataset.copyConfig);
+          if (!source) return;
+          const copied = {
+            ...source,
+            id: `SORT${Date.now().toString().slice(-10)}`,
+            status: "待生效",
+            updatedBy: "当前用户",
+            updatedAt: nowText()
+          };
+          configs.unshift(copied);
+          selectedConfigId = copied.id;
+          logs.unshift({ time: nowText(), type: "复制配置", text: `${source.id} 已复制为 ${copied.id}`, status: "成功" });
+          showToast("已复制为待生效配置");
+          renderConfigs();
+          renderAdminPreview();
+        });
+      });
+    }
+
+    function statusTag(status) {
+      if (status === "生效中") return `<span class="tag green">${status}</span>`;
+      if (status === "待生效") return `<span class="tag blue">${status}</span>`;
+      return `<span class="tag gray">${status}</span>`;
+    }
+
+    function renderAdminPreview() {
+      const storeKey = $("#previewStore").value;
+      const config = configs.find((item) => item.id === selectedConfigId) || configs[0];
+      if (!config) return;
+      const visible = [];
+      const filtered = [];
+      config.pinned.map(getProduct).filter(Boolean).forEach((product) => {
+        if (isVisible(product, storeKey)) visible.push(product);
+        else filtered.push({ product, reason: visibilityReason(product, storeKey) });
+      });
+
+      $("#pinnedVisible").textContent = visible.length;
+      $("#pinnedFiltered").textContent = filtered.length;
+      const sorted = getSortedProducts(config.category, storeKey, "default", config.warehouse).slice(0, 6);
+      const visibleHtml = sorted.map((product) => `
+        <div class="preview-item">
+          <div><strong>${product.position}. ${product.name}</strong> ${sourceTag(product.source)}</div>
+          <div class="muted">ABC：${product.abc || "未分级"}；近28天平均PSD：${product.psd[storeKey] || "-"}；库存：${product.stock[storeKey] || 0}</div>
+        </div>
+      `).join("");
+
+      const filteredHtml = filtered.map(({ product, reason }) => `
+        <div class="preview-item filtered">
+          <div><strong>${product.name}</strong> <span class="tag red">不展示</span></div>
+          <div class="muted">过滤原因：${reason}。后台配置仍保留，其他门店如可见则继续置顶。</div>
+        </div>
+      `).join("");
+
+      $("#adminPreviewList").innerHTML = visibleHtml + filteredHtml || `<div class="preview-item">暂无可预览商品</div>`;
+    }
+
+    function sourceTag(source) {
+      if (source === "人工置顶") return `<span class="tag blue">人工置顶</span>`;
+      if (source === "ABC+PSD") return `<span class="tag green">ABC+PSD</span>`;
+      if (source === "新品兜底") return `<span class="tag amber">新品兜底</span>`;
+      if (source === "手动排序") return `<span class="tag purple">手动排序</span>`;
+      return `<span class="tag gray">${source}</span>`;
+    }
+
+    function openDrawer(configId) {
+      const source = configs.find((item) => item.id === configId);
+      editingConfig = source ? JSON.parse(JSON.stringify(source)) : {
+        id: `SORT${Date.now().toString().slice(-10)}`,
+        org: "万昌集团",
+        warehouse: "合肥冷链仓",
+        category: "cold",
+        status: "待生效",
+        start: "2026-06-30",
+        end: "长期",
+        limit: 10,
+        pinned: [],
+        updatedBy: "当前用户",
+        updatedAt: nowText()
+      };
+
+      $("#drawerTitle").textContent = source ? "编辑置顶配置" : "新增置顶配置";
+      $("#formOrg").value = editingConfig.org;
+      $("#formWarehouse").value = editingConfig.warehouse;
+      $("#formCategory").value = editingConfig.category;
+      $("#formStart").value = editingConfig.start;
+      $("#formEnd").value = editingConfig.end;
+      $("#formLimit").value = editingConfig.limit;
+      renderSkuOptions();
+      renderDrawerSkus();
+      $("#drawerMask").classList.add("show");
+    }
+
+    function closeDrawer() {
+      $("#drawerMask").classList.remove("show");
+      editingConfig = null;
+    }
+
+    function renderSkuOptions() {
+      if (!editingConfig) return;
+      const category = $("#formCategory").value;
+      const selected = new Set(editingConfig.pinned);
+      const options = products.filter((item) => item.category === category && !selected.has(item.id));
+      $("#skuSelect").innerHTML = options.map((item) => `<option value="${item.id}">${item.id} ${item.name} / ${item.abc || "未分级"} / PSD ${item.psd.tc || "-"}</option>`).join("");
+    }
+
+    function renderDrawerSkus() {
+      if (!editingConfig) return;
+      const limit = Number($("#formLimit").value) || editingConfig.limit || 10;
+      $("#drawerSkuCount").textContent = `${editingConfig.pinned.length} / ${limit}`;
+      $("#drawerSkuTbody").innerHTML = editingConfig.pinned.map((id, index) => {
+        const product = getProduct(id);
+        if (!product) return "";
+        const abnormal = product.visible && Object.keys(product.visible).length > 0;
+        return `
+          <tr>
+            <td>${index + 1}</td>
+            <td>${product.id} ${product.name}</td>
+            <td>${product.abc || "未分级"}</td>
+            <td>${product.psd.tc || "-"}</td>
+            <td>${abnormal ? `<span class="tag amber">部分门店不可见</span>` : `<span class="tag green">正常</span>`}</td>
+            <td>
+              <button class="icon-btn" data-move-up="${index}" ${index === 0 ? "disabled" : ""}>↑</button>
+              <button class="icon-btn" data-move-down="${index}" ${index === editingConfig.pinned.length - 1 ? "disabled" : ""}>↓</button>
+              <button class="icon-btn" data-remove-sku="${id}">×</button>
+            </td>
+          </tr>
+        `;
+      }).join("");
+
+      $$("[data-move-up]").forEach((button) => {
+        button.addEventListener("click", () => {
+          const index = Number(button.dataset.moveUp);
+          const list = editingConfig.pinned;
+          [list[index - 1], list[index]] = [list[index], list[index - 1]];
+          renderDrawerSkus();
+        });
+      });
+
+      $$("[data-move-down]").forEach((button) => {
+        button.addEventListener("click", () => {
+          const index = Number(button.dataset.moveDown);
+          const list = editingConfig.pinned;
+          [list[index + 1], list[index]] = [list[index], list[index + 1]];
+          renderDrawerSkus();
+        });
+      });
+
+      $$("[data-remove-sku]").forEach((button) => {
+        button.addEventListener("click", () => {
+          editingConfig.pinned = editingConfig.pinned.filter((id) => id !== button.dataset.removeSku);
+          renderSkuOptions();
+          renderDrawerSkus();
+        });
+      });
+    }
+
+    function saveDrawer() {
+      if (!editingConfig) return;
+      editingConfig.org = $("#formOrg").value;
+      editingConfig.warehouse = $("#formWarehouse").value;
+      editingConfig.category = $("#formCategory").value;
+      editingConfig.start = $("#formStart").value;
+      editingConfig.end = $("#formEnd").value;
+      editingConfig.limit = Number($("#formLimit").value) || 10;
+      editingConfig.updatedBy = "当前用户";
+      editingConfig.updatedAt = nowText();
+
+      const existingIndex = configs.findIndex((item) => item.id === editingConfig.id);
+      if (existingIndex >= 0) configs[existingIndex] = editingConfig;
+      else configs.unshift(editingConfig);
+      selectedConfigId = editingConfig.id;
+      logs.unshift({ time: nowText(), type: "保存配置", text: `${editingConfig.id} 保存置顶商品 ${editingConfig.pinned.length} 个`, status: "成功" });
+      closeDrawer();
+      renderConfigs();
+      renderAdminPreview();
+      renderApp();
+      showToast("配置已保存");
+    }
+
+    function renderApp() {
+      const storeKey = $("#appStore").value;
+      const warehouse = $("#appWarehouse").value;
+      const sortMode = activeSort;
+      $("#phoneStoreName").textContent = stores[storeKey].name;
+      $("#phoneWarehouseName").textContent = warehouse;
+
+      const list = getSortedProducts(activeAppCategory, storeKey, sortMode, warehouse);
+      $("#resultCount").textContent = `${list.length} 个商品`;
+
+      if (activeAppCategory === "cold" && sortMode === "default") {
+        $("#sortNotice").textContent = "当前为默认排序：人工置顶 > ABC等级 > 近28天平均PSD > 新品时间兜底。";
+      } else if (sortMode !== "default") {
+        $("#sortNotice").textContent = "当前为用户手动排序，系统默认排序只在切回默认或重新进入分类后恢复。";
+      } else if (activeAppCategory === "endcap") {
+        $("#sortNotice").textContent = "端堆商品沿用现有规则，按端架 / 地堆编号排序，不套 ABC + PSD。";
+      } else if (activeAppCategory === "special") {
+        $("#sortNotice").textContent = "特价专区沿用现有规则，按特价时间排序，不套 ABC + PSD。";
+      } else {
+        $("#sortNotice").textContent = "超期未订沿用现有规则，不套本次默认排序。";
+      }
+
+      $("#phoneProducts").innerHTML = list.map((product) => `
+        <div class="product">
+          <div class="product-thumb">${product.glyph}</div>
+          <div class="product-main">
+            <div class="product-name">${sourceTiny(product.source)}<span>${product.name}</span></div>
+            <div class="product-meta">
+              <span>${product.id}</span>
+              <span>ABC：${product.abc || "未分级"}</span>
+              <span>PSD：${product.psd[storeKey] || "-"}</span>
+              <span>库存：${product.stock[storeKey] || 0}</span>
+            </div>
+            <div class="product-meta">${productSourceText(product, storeKey)}</div>
+            <div class="price-row">
+              <span class="price">¥${product.price.toFixed(2)}</span>
+              <button class="add" aria-label="加购">+</button>
+            </div>
+          </div>
+        </div>
+      `).join("");
+
+      $("#appExplainTbody").innerHTML = list.map((product) => `
+        <tr>
+          <td>${product.position}</td>
+          <td>${product.id} ${product.name}</td>
+          <td>${sourceTag(product.source)}</td>
+          <td>${product.abc || "未分级"}</td>
+          <td>${product.psd[storeKey] || "-"}</td>
+          <td>${product.stock[storeKey] || 0}</td>
+        </tr>
+      `).join("");
+    }
+
+    function sourceTiny(source) {
+      if (source === "人工置顶") return `<span class="tag blue" style="min-width: 34px;">置顶</span>`;
+      if (source === "手动排序") return `<span class="tag purple" style="min-width: 34px;">手动</span>`;
+      if (source === "端堆编号") return `<span class="tag amber" style="min-width: 34px;">端堆</span>`;
+      if (source === "特价时间") return `<span class="tag red" style="min-width: 34px;">特价</span>`;
+      return "";
+    }
+
+    function productSourceText(product, storeKey) {
+      if (product.source === "人工置顶") return "后台置顶候选命中，且当前门店可见。";
+      if (product.source === "ABC+PSD") return `按 ${product.abc} 级 + PSD ${product.psd[storeKey]} 排序。`;
+      if (product.source === "新品兜底") return `未分级新品，按时间 ${product.created} 兜底。`;
+      if (product.source === "端堆编号") return `端架 / 地堆编号：${product.endcapNo}`;
+      if (product.source === "特价时间") return `特价时间：${product.specialTime}`;
+      if (product.source === "超期未订") return `超期未订：${product.overdueDays} 天`;
+      return "用户当前选择的手动排序结果。";
+    }
+
+    function renderLogs() {
+      $("#logList").innerHTML = logs.map((log) => `
+        <div class="log-row">
+          <div class="muted">${log.time}</div>
+          <div><strong>${log.type}</strong><br><span class="muted">${log.text}</span></div>
+          ${log.status === "成功" ? `<span class="tag green">${log.status}</span>` : `<span class="tag amber">${log.status}</span>`}
+        </div>
+      `).join("");
+    }
+
+    function nowText() {
+      const now = new Date();
+      const pad = (num) => String(num).padStart(2, "0");
+      return `${now.getFullYear()}-${pad(now.getMonth() + 1)}-${pad(now.getDate())} ${pad(now.getHours())}:${pad(now.getMinutes())}`;
+    }
+
+    function bindEvents() {
+      $("#queryBtn").addEventListener("click", renderConfigs);
+      $("#resetBtn").addEventListener("click", () => {
+        $("#filterWarehouse").value = "";
+        $("#filterCategory").value = "";
+        $("#filterStatus").value = "";
+        renderConfigs();
+      });
+      $("#addConfigBtn").addEventListener("click", () => openDrawer());
+      $("#closeDrawerBtn").addEventListener("click", closeDrawer);
+      $("#cancelDrawerBtn").addEventListener("click", closeDrawer);
+      $("#saveConfigBtn").addEventListener("click", saveDrawer);
+      $("#previewStore").addEventListener("change", renderAdminPreview);
+      $("#adminPreviewBtn").addEventListener("click", renderAdminPreview);
+      $("#openLogBtn").addEventListener("click", () => switchTo("logView"));
+
+      $("#formCategory").addEventListener("change", () => {
+        if (!editingConfig) return;
+        editingConfig.category = $("#formCategory").value;
+        editingConfig.pinned = [];
+        renderSkuOptions();
+        renderDrawerSkus();
+      });
+
+      $("#formLimit").addEventListener("input", renderDrawerSkus);
+      $("#addSkuBtn").addEventListener("click", () => {
+        if (!editingConfig) return;
+        const limit = Number($("#formLimit").value) || 10;
+        const id = $("#skuSelect").value;
+        if (!id) return;
+        if (editingConfig.pinned.length >= limit) {
+          showToast("已达到置顶上限");
+          return;
+        }
+        editingConfig.pinned.push(id);
+        renderSkuOptions();
+        renderDrawerSkus();
+      });
+
+      $("#appStore").addEventListener("change", renderApp);
+      $("#appWarehouse").addEventListener("change", renderApp);
+      $("#appSortSelect").addEventListener("change", (event) => {
+        activeSort = event.target.value;
+        syncSortChips();
+        renderApp();
+      });
+      $("#restoreDefaultBtn").addEventListener("click", () => {
+        activeSort = "default";
+        syncSortChips();
+        renderApp();
+      });
+      $("#syncPreviewBtn").addEventListener("click", () => {
+        $("#previewStore").value = $("#appStore").value;
+        renderAdminPreview();
+        switchTo("adminView");
+      });
+
+      $$(".category-card").forEach((card) => {
+        card.addEventListener("click", () => {
+          $$(".category-card").forEach((item) => item.classList.remove("active"));
+          card.classList.add("active");
+          activeAppCategory = card.dataset.appCategory;
+          if (activeAppCategory !== "cold") activeSort = "default";
+          syncSortChips();
+          renderApp();
+        });
+      });
+
+      $$(".sort-chip").forEach((chip) => {
+        chip.addEventListener("click", () => {
+          activeSort = chip.dataset.phoneSort;
+          syncSortChips();
+          renderApp();
+        });
+      });
+
+      $("#runJobBtn").addEventListener("click", () => {
+        logs.unshift({ time: nowText(), type: "定时任务", text: "模拟刷新 ABC 等级、近28天平均PSD 和排序缓存完成", status: "成功" });
+        renderLogs();
+        showToast("模拟任务执行成功");
+      });
+    }
+
+    function syncSortChips() {
+      $("#appSortSelect").value = activeSort;
+      $$(".sort-chip").forEach((chip) => chip.classList.toggle("active", chip.dataset.phoneSort === activeSort));
+    }
+
+    renderTabs();
+    bindEvents();
+    renderConfigs();
+    renderAdminPreview();
+    renderApp();
+    renderLogs();
+  </script>
+</body>
+</html>
