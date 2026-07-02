@@ -1173,7 +1173,7 @@
     <nav class="tabbar">
       <button class="tab active" data-view="adminView">PC后台配置</button>
       <button class="tab" data-view="appView">APP分类页</button>
-      <button class="tab" data-view="logView">规则与日志</button>
+      <button class="tab" data-view="logView">运行日志</button>
     </nav>
 
     <main class="main">
@@ -1184,6 +1184,7 @@
             <div class="subtitle">维护分类页人工置顶商品，并预览不同门店的默认排序结果</div>
           </div>
           <div class="actions">
+            <button class="btn" id="sortRuleBtn">排序规则</button>
             <button class="btn" id="adminPreviewBtn">预览门店差异</button>
             <button class="btn" id="openLogBtn">运行日志</button>
             <button class="btn primary" id="addConfigBtn">+ 新增置顶配置</button>
@@ -1458,7 +1459,7 @@
       <section id="logView" class="view">
         <div class="toolbar">
           <div class="title-block">
-            <h1>规则预览与运行日志</h1>
+            <h1>运行日志</h1>
             <div class="subtitle">展示排序任务、配置变更和失败兜底结果</div>
           </div>
           <div class="actions">
@@ -1466,29 +1467,13 @@
           </div>
         </div>
 
-        <div class="split">
-          <div class="panel">
-            <div class="panel-head">
-              <h2>默认排序规则</h2>
-            </div>
-            <div class="panel-body">
-              <ul class="rule-list">
-                <li><span class="rank">1</span><span>选品页面的分类页优先展示人工置顶商品；置顶商品按照登录用户权限、停要、经营范围、发货仓补货范围过滤。</span></li>
-                <li><span class="rank">2</span><span>非置顶商品按 ABC 等级排序，A 高于 B，B 高于 C，未分级商品低于 C。</span></li>
-                <li><span class="rank">3</span><span>同等级商品按近 28 天均销降序，PSD 以 BI 口径为准。</span></li>
-                <li><span class="rank">4</span><span>端堆、特价、超期未订、搜索、采购车和结算页沿用既有排序，不套本规则。</span></li>
-              </ul>
-            </div>
+        <div class="panel">
+          <div class="panel-head">
+            <h2>运行与操作日志</h2>
+            <span class="tag green">本地模拟</span>
           </div>
-
-          <div class="panel">
-            <div class="panel-head">
-              <h2>运行与操作日志</h2>
-              <span class="tag green">本地模拟</span>
-            </div>
-            <div class="panel-body">
-              <div class="log-list" id="logList"></div>
-            </div>
+          <div class="panel-body">
+            <div class="log-list" id="logList"></div>
           </div>
         </div>
       </section>
@@ -1578,6 +1563,26 @@
       </div>
       <div class="modal-foot">
         <button class="btn primary" id="confirmProductModalBtn">完成</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="modal-mask" id="sortRuleModalMask">
+    <div class="modal" role="dialog" aria-modal="true" aria-labelledby="sortRuleModalTitle">
+      <div class="modal-head">
+        <h2 id="sortRuleModalTitle">排序规则</h2>
+        <button class="icon-btn" id="closeSortRuleModalBtn" aria-label="关闭">×</button>
+      </div>
+      <div class="modal-body">
+        <ul class="rule-list">
+          <li><span class="rank">1</span><span>选品页面的分类页优先展示人工置顶商品；置顶商品按照登录用户权限、停要、经营范围、发货仓补货范围过滤。</span></li>
+          <li><span class="rank">2</span><span>非置顶商品按 ABC 等级排序，A 高于 B，B 高于 C，未分级商品低于 C。</span></li>
+          <li><span class="rank">3</span><span>同等级商品按近 28 天均销降序，PSD 以 BI 口径为准。</span></li>
+          <li><span class="rank">4</span><span>端堆、特价、超期未订、搜索、采购车和结算页沿用既有排序，不套本规则。</span></li>
+        </ul>
+      </div>
+      <div class="modal-foot">
+        <button class="btn" id="cancelSortRuleModalBtn">关闭</button>
       </div>
     </div>
   </div>
@@ -1970,6 +1975,14 @@
 
     function closePreviewModal() {
       $("#previewModalMask").classList.remove("show");
+    }
+
+    function openSortRuleModal() {
+      $("#sortRuleModalMask").classList.add("show");
+    }
+
+    function closeSortRuleModal() {
+      $("#sortRuleModalMask").classList.remove("show");
     }
 
     function renderAdminPreview() {
@@ -2420,6 +2433,9 @@
       $("#confirmCategoryModalBtn").addEventListener("click", confirmCategoryModal);
       $("#closeProductModalBtn").addEventListener("click", closeProductModal);
       $("#confirmProductModalBtn").addEventListener("click", closeProductModal);
+      $("#sortRuleBtn").addEventListener("click", openSortRuleModal);
+      $("#closeSortRuleModalBtn").addEventListener("click", closeSortRuleModal);
+      $("#cancelSortRuleModalBtn").addEventListener("click", closeSortRuleModal);
       $("#closePreviewModalBtn").addEventListener("click", closePreviewModal);
       $("#cancelPreviewModalBtn").addEventListener("click", closePreviewModal);
       $("#previewQueryBtn").addEventListener("click", renderAdminPreview);
