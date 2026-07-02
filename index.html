@@ -1136,8 +1136,7 @@
         grid-template-columns: repeat(3, minmax(150px, 1fr));
       }
 
-      .split,
-      .app-layout {
+      .split {
         grid-template-columns: 1fr;
       }
 
@@ -1172,7 +1171,6 @@
 
     <nav class="tabbar">
       <button class="tab active" data-view="adminView">PC后台配置</button>
-      <button class="tab" data-view="appView">APP分类页</button>
       <button class="tab" data-view="logView">运行日志</button>
     </nav>
 
@@ -1333,124 +1331,6 @@
                 </thead>
                 <tbody id="categoryGroupTbody"></tbody>
               </table>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      <section id="appView" class="view">
-        <div class="toolbar">
-          <div class="title-block">
-            <h1>APP 门店补货商城分类页</h1>
-            <div class="subtitle">演示默认排序、手动排序覆盖、门店差异，以及端堆 / 特价不受本规则影响</div>
-          </div>
-          <div class="actions">
-            <button class="btn" id="restoreDefaultBtn">恢复默认排序</button>
-            <button class="btn primary" id="syncPreviewBtn">同步后台置顶预览</button>
-          </div>
-        </div>
-
-        <div class="app-layout">
-          <div>
-            <div class="control-grid">
-              <div class="field">
-                <label>门店</label>
-                <select id="appStore">
-                  <option value="tc">天长门店</option>
-                  <option value="cn">城南门店</option>
-                  <option value="xk">新开门店</option>
-                </select>
-              </div>
-              <div class="field">
-                <label>发货仓</label>
-                <select id="appWarehouse">
-                  <option>合肥冷链仓</option>
-                  <option>南京常温仓</option>
-                </select>
-              </div>
-              <div class="field">
-                <label>排序方式</label>
-                <select id="appSortSelect">
-                  <option value="default">默认排序</option>
-                  <option value="psd">PSD从高到低</option>
-                  <option value="priceAsc">价格从低到高</option>
-                  <option value="stockDesc">库存从高到低</option>
-                  <option value="newest">最新上新</option>
-                </select>
-              </div>
-            </div>
-
-            <div class="category-rail">
-              <div class="category-card active" data-app-category="cold">
-                <strong>乳品冷链</strong>
-                <span>应用人工置顶 + ABC + 均销</span>
-              </div>
-              <div class="category-card" data-app-category="endcap">
-                <strong>端堆商品</strong>
-                <span>按端架 / 地堆编号</span>
-              </div>
-              <div class="category-card" data-app-category="special">
-                <strong>特价专区</strong>
-                <span>按特价时间</span>
-              </div>
-              <div class="category-card" data-app-category="overdue">
-                <strong>超期未订</strong>
-                <span>沿用现有规则</span>
-              </div>
-            </div>
-
-            <div class="notice" id="sortNotice">当前为默认排序：人工置顶 > ABC等级 > 近28天均销。</div>
-
-            <div class="panel">
-              <div class="panel-head">
-                <h2>排序结果解释</h2>
-                <span class="tag gray" id="resultCount">0 个商品</span>
-              </div>
-              <div class="panel-body">
-                <table>
-                  <thead>
-                    <tr>
-                      <th style="width: 52px;">位次</th>
-                      <th>商品</th>
-                      <th style="width: 76px;">排序来源</th>
-                      <th style="width: 76px;">ABC</th>
-                      <th style="width: 90px;">PSD</th>
-                      <th style="width: 84px;">库存</th>
-                    </tr>
-                  </thead>
-                  <tbody id="appExplainTbody"></tbody>
-                </table>
-              </div>
-            </div>
-          </div>
-
-          <div class="phone">
-            <div class="phone-screen">
-              <div class="app-head">
-                <button class="btn ghost" style="width: 28px; padding: 0;">‹</button>
-                <div class="app-head-title">门店补货</div>
-              </div>
-              <div class="app-store">
-                <div class="store-row">
-                  <strong id="phoneStoreName">天长门店</strong>
-                  <span id="phoneWarehouseName">合肥冷链仓</span>
-                </div>
-                <div class="search-box">搜索商品名称 / 条码 / 分类</div>
-              </div>
-              <div class="app-sort">
-                <button class="sort-chip active" data-phone-sort="default">默认</button>
-                <button class="sort-chip" data-phone-sort="psd">PSD</button>
-                <button class="sort-chip" data-phone-sort="priceAsc">价格</button>
-                <button class="sort-chip" data-phone-sort="stockDesc">库存</button>
-                <button class="sort-chip" data-phone-sort="newest">最新</button>
-              </div>
-              <div class="product-list" id="phoneProducts"></div>
-              <div class="bottom-nav">
-                <div class="nav-item">首页</div>
-                <div class="nav-item active">分类</div>
-                <div class="nav-item">采购车</div>
-                <div class="nav-item">我的</div>
-              </div>
             </div>
           </div>
         </div>
@@ -1720,8 +1600,6 @@
     let editingConfig = null;
     let tempWarehouses = [];
     let currentProductCategory = "";
-    let activeAppCategory = "cold";
-    let activeSort = "default";
 
     const $ = (selector) => document.querySelector(selector);
     const $$ = (selector) => Array.from(document.querySelectorAll(selector));
@@ -1866,7 +1744,6 @@
       $$(".tab").forEach((item) => item.classList.remove("active"));
       const tab = $(`.tab[data-view="${viewId}"]`) || $(".tab[data-view='adminView']");
       tab?.classList.add("active");
-      if (viewId === "appView") renderApp();
       if (viewId === "logView") renderLogs();
       if (viewId === "adminView") renderConfigs();
     }
@@ -2319,81 +2196,8 @@
       editingConfig = null;
       renderConfigs();
       renderAdminPreview();
-      renderApp();
       showView("adminView");
       showToast("配置已保存");
-    }
-
-    function renderApp() {
-      const storeKey = $("#appStore").value;
-      const warehouse = $("#appWarehouse").value;
-      const sortMode = activeSort;
-      $("#phoneStoreName").textContent = stores[storeKey].name;
-      $("#phoneWarehouseName").textContent = warehouse;
-
-      const list = getSortedProducts(activeAppCategory, storeKey, sortMode, warehouse);
-      $("#resultCount").textContent = `${list.length} 个商品`;
-
-      if (activeAppCategory === "cold" && sortMode === "default") {
-        $("#sortNotice").textContent = "当前为默认排序：人工置顶 > ABC等级 > 近28天均销。";
-      } else if (sortMode !== "default") {
-        $("#sortNotice").textContent = "当前为用户手动排序，系统默认排序只在切回默认或重新进入分类后恢复。";
-      } else if (activeAppCategory === "endcap") {
-        $("#sortNotice").textContent = "端堆商品沿用现有规则，按端架 / 地堆编号排序，不套 ABC + 均销。";
-      } else if (activeAppCategory === "special") {
-        $("#sortNotice").textContent = "特价专区沿用现有规则，按特价时间排序，不套 ABC + 均销。";
-      } else {
-        $("#sortNotice").textContent = "超期未订沿用现有规则，不套本次默认排序。";
-      }
-
-      $("#phoneProducts").innerHTML = list.map((product) => `
-        <div class="product">
-          <div class="product-thumb">${product.glyph}</div>
-          <div class="product-main">
-            <div class="product-name">${sourceTiny(product.source)}<span>${product.name}</span></div>
-            <div class="product-meta">
-              <span>${product.id}</span>
-              <span>ABC：${product.abc || "未分级"}</span>
-              <span>PSD：${product.psd[storeKey] || "-"}</span>
-              <span>库存：${product.stock[storeKey] || 0}</span>
-            </div>
-            <div class="product-meta">${productSourceText(product, storeKey)}</div>
-            <div class="price-row">
-              <span class="price">¥${product.price.toFixed(2)}</span>
-              <button class="add" aria-label="加购">+</button>
-            </div>
-          </div>
-        </div>
-      `).join("");
-
-      $("#appExplainTbody").innerHTML = list.map((product) => `
-        <tr>
-          <td>${product.position}</td>
-          <td>${product.id} ${product.name}</td>
-          <td>${sourceTag(product.source)}</td>
-          <td>${product.abc || "未分级"}</td>
-          <td>${product.psd[storeKey] || "-"}</td>
-          <td>${product.stock[storeKey] || 0}</td>
-        </tr>
-      `).join("");
-    }
-
-    function sourceTiny(source) {
-      if (source === "人工置顶") return `<span class="tag blue" style="min-width: 34px;">置顶</span>`;
-      if (source === "手动排序") return `<span class="tag purple" style="min-width: 34px;">手动</span>`;
-      if (source === "端堆编号") return `<span class="tag amber" style="min-width: 34px;">端堆</span>`;
-      if (source === "特价时间") return `<span class="tag red" style="min-width: 34px;">特价</span>`;
-      return "";
-    }
-
-    function productSourceText(product, storeKey) {
-      if (product.source === "人工置顶") return "后台置顶候选命中，且当前门店可见。";
-      if (product.source === "ABC+均销") return `按 ${product.abc} 级 + 近28天均销 ${product.psd[storeKey]} 排序。`;
-      if (product.source === "未分级") return "未分级商品排在 C 级之后，再按近28天均销和稳定顺序展示。";
-      if (product.source === "端堆编号") return `端架 / 地堆编号：${product.endcapNo}`;
-      if (product.source === "特价时间") return `特价时间：${product.specialTime}`;
-      if (product.source === "超期未订") return `超期未订：${product.overdueDays} 天`;
-      return "用户当前选择的手动排序结果。";
     }
 
     function renderLogs() {
@@ -2442,43 +2246,6 @@
       $("#adminPreviewBtn").addEventListener("click", () => openPreviewModal(false));
       $("#openLogBtn").addEventListener("click", () => switchTo("logView"));
 
-      $("#appStore").addEventListener("change", renderApp);
-      $("#appWarehouse").addEventListener("change", renderApp);
-      $("#appSortSelect").addEventListener("change", (event) => {
-        activeSort = event.target.value;
-        syncSortChips();
-        renderApp();
-      });
-      $("#restoreDefaultBtn").addEventListener("click", () => {
-        activeSort = "default";
-        syncSortChips();
-        renderApp();
-      });
-      $("#syncPreviewBtn").addEventListener("click", () => {
-        $("#previewStore").value = $("#appStore").value;
-        switchTo("adminView");
-        openPreviewModal(true);
-      });
-
-      $$(".category-card").forEach((card) => {
-        card.addEventListener("click", () => {
-          $$(".category-card").forEach((item) => item.classList.remove("active"));
-          card.classList.add("active");
-          activeAppCategory = card.dataset.appCategory;
-          if (activeAppCategory !== "cold") activeSort = "default";
-          syncSortChips();
-          renderApp();
-        });
-      });
-
-      $$(".sort-chip").forEach((chip) => {
-        chip.addEventListener("click", () => {
-          activeSort = chip.dataset.phoneSort;
-          syncSortChips();
-          renderApp();
-        });
-      });
-
       $("#runJobBtn").addEventListener("click", () => {
         logs.unshift({ time: nowText(), type: "定时任务", text: "模拟刷新 ABC 等级、近28天均销和排序缓存完成", status: "成功" });
         renderLogs();
@@ -2486,16 +2253,10 @@
       });
     }
 
-    function syncSortChips() {
-      $("#appSortSelect").value = activeSort;
-      $$(".sort-chip").forEach((chip) => chip.classList.toggle("active", chip.dataset.phoneSort === activeSort));
-    }
-
     renderTabs();
     bindEvents();
     renderConfigs();
     resetAdminPreview();
-    renderApp();
     renderLogs();
   </script>
 </body>
