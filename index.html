@@ -1325,6 +1325,7 @@
                   <tr>
                     <th style="width: 72px;">分类排序</th>
                     <th style="width: 180px;">商品分类</th>
+                    <th style="width: 160px;">商品代码</th>
                     <th>置顶商品</th>
                     <th style="width: 190px;">操作</th>
                   </tr>
@@ -2109,6 +2110,7 @@
       const groups = getConfigGroups(editingConfig);
       $("#categoryGroupCount").textContent = `${groups.length} 个分类`;
       $("#categoryGroupTbody").innerHTML = groups.length ? groups.map((group, index) => {
+        const codeSummary = group.pinned.length ? `${group.pinned.slice(0, 3).join("、")}${group.pinned.length > 3 ? ` 等 ${group.pinned.length} 个` : ""}` : "-";
         const names = group.pinned.map(getProduct).filter(Boolean).map((product) => product.name);
         const summary = names.length ? `${names.slice(0, 3).join("、")}${names.length > 3 ? ` 等 ${names.length} 个` : ""}` : "未选择商品";
         return `
@@ -2121,6 +2123,7 @@
               </div>
             </td>
             <td>${categoryNames[group.category] || group.category}</td>
+            <td>${codeSummary}</td>
             <td>
               <button class="link" data-open-products="${group.category}">${group.pinned.length} 个商品</button>
               <div class="table-meta">${summary}</div>
@@ -2132,7 +2135,7 @@
             </td>
           </tr>
         `;
-      }).join("") : `<tr><td class="empty-row" colspan="4">暂无分类，点击“新增分类”添加</td></tr>`;
+      }).join("") : `<tr><td class="empty-row" colspan="5">暂无分类，点击“新增分类”添加</td></tr>`;
 
       $$("[data-move-category-up]").forEach((button) => {
         button.addEventListener("click", () => {
