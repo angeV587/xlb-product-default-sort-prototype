@@ -871,30 +871,33 @@
       border-color: #ffd1d1;
     }
 
-    .drawer-mask {
+    .modal-mask {
       position: fixed;
       inset: 0;
       background: rgba(16, 24, 40, 0.36);
       display: none;
-      justify-content: flex-end;
-      z-index: 100;
+      align-items: center;
+      justify-content: center;
+      padding: 24px;
+      z-index: 110;
     }
 
-    .drawer-mask.show {
+    .modal-mask.show {
       display: flex;
     }
 
-    .drawer {
-      width: 720px;
-      max-width: calc(100vw - 160px);
-      height: 100%;
+    .modal {
+      width: min(760px, calc(100vw - 80px));
+      max-height: calc(100vh - 80px);
       background: #fff;
-      display: grid;
-      grid-template-rows: 54px 1fr 56px;
+      border-radius: 6px;
       box-shadow: var(--shadow);
+      display: grid;
+      grid-template-rows: 54px minmax(0, 1fr) 56px;
+      overflow: hidden;
     }
 
-    .drawer-head {
+    .modal-head {
       display: flex;
       align-items: center;
       justify-content: space-between;
@@ -902,21 +905,21 @@
       border-bottom: 1px solid var(--line);
     }
 
-    .drawer-head h2 {
+    .modal-head h2 {
       margin: 0;
       font-size: 16px;
       line-height: 22px;
     }
 
-    .drawer-body {
+    .modal-body {
       overflow: auto;
       padding: 14px 16px;
       display: grid;
-      gap: 14px;
+      gap: 12px;
       align-content: start;
     }
 
-    .drawer-foot {
+    .modal-foot {
       display: flex;
       align-items: center;
       justify-content: flex-end;
@@ -926,21 +929,164 @@
       background: #fbfcfe;
     }
 
+    .modal.small {
+      width: min(520px, calc(100vw - 80px));
+    }
+
+    .modal.wide {
+      width: min(920px, calc(100vw - 80px));
+    }
+
+    .preview-query {
+      display: grid;
+      grid-template-columns: 1fr auto;
+      gap: 10px;
+      align-items: end;
+    }
+
+    .detail-shell {
+      display: grid;
+      gap: 10px;
+    }
+
     .form-grid {
       display: grid;
       grid-template-columns: repeat(3, 1fr);
       gap: 10px;
     }
 
+    .span-2 {
+      grid-column: span 2;
+    }
+
     .span-3 {
       grid-column: 1 / 4;
     }
 
-    .sku-pool {
-      display: grid;
-      grid-template-columns: 1fr auto;
+    .multi-select {
+      min-height: 32px;
+      border: 1px solid #cfd8e6;
+      border-radius: 4px;
+      background: #fff;
+      padding: 4px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
       gap: 8px;
-      align-items: end;
+    }
+
+    .chip-list {
+      min-width: 0;
+      display: flex;
+      align-items: center;
+      gap: 5px;
+      flex-wrap: wrap;
+    }
+
+    .chip {
+      height: 24px;
+      border-radius: 4px;
+      border: 1px solid #cbd9ff;
+      background: var(--blue-soft);
+      color: var(--blue);
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      padding: 0 7px;
+      font-size: 12px;
+      white-space: nowrap;
+    }
+
+    .chip button {
+      width: 16px;
+      height: 16px;
+      border: 0;
+      background: transparent;
+      color: var(--blue);
+      padding: 0;
+      line-height: 16px;
+    }
+
+    .multi-select .icon-btn {
+      flex: 0 0 auto;
+      width: 24px;
+      height: 24px;
+    }
+
+    .table-meta {
+      margin-top: 4px;
+      color: var(--muted);
+      font-size: 12px;
+      line-height: 18px;
+      white-space: normal;
+    }
+
+    .inline-tools {
+      display: flex;
+      align-items: center;
+      gap: 4px;
+    }
+
+    .choice-list {
+      display: grid;
+      gap: 8px;
+    }
+
+    .choice-row {
+      min-height: 38px;
+      border: 1px solid var(--line-soft);
+      border-radius: 4px;
+      background: #fbfcfe;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 8px 10px;
+      font-size: 13px;
+    }
+
+    .choice-row input {
+      width: 16px;
+      height: 16px;
+      padding: 0;
+    }
+
+    .picker-grid {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+      gap: 12px;
+      align-items: start;
+    }
+
+    .picker-box {
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      overflow: hidden;
+      background: #fff;
+    }
+
+    .picker-box-head {
+      min-height: 38px;
+      padding: 0 10px;
+      border-bottom: 1px solid var(--line-soft);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 8px;
+      background: #fbfcfe;
+      font-size: 13px;
+      font-weight: 800;
+    }
+
+    .picker-box-body {
+      max-height: 330px;
+      overflow: auto;
+    }
+
+    .empty-row {
+      height: 72px;
+      color: var(--muted);
+      text-align: center;
+      background: #fbfcfe;
     }
 
     .toast {
@@ -992,6 +1138,10 @@
 
       .split,
       .app-layout {
+        grid-template-columns: 1fr;
+      }
+
+      .picker-grid {
         grid-template-columns: 1fr;
       }
 
@@ -1050,11 +1200,12 @@
               </select>
             </div>
             <div class="field">
-              <label>发货仓 / 配送中心</label>
+              <label>配送中心</label>
               <select id="filterWarehouse">
                 <option value="">全部</option>
                 <option>合肥冷链仓</option>
                 <option>南京常温仓</option>
+                <option>上海鲜食仓</option>
               </select>
             </div>
             <div class="field">
@@ -1063,6 +1214,8 @@
                 <option value="">全部</option>
                 <option value="cold">乳品冷链</option>
                 <option value="fresh">鲜食烘焙</option>
+                <option value="snack">休闲零食</option>
+                <option value="noodle">方便速食</option>
               </select>
             </div>
             <div class="field">
@@ -1082,52 +1235,102 @@
           </div>
         </div>
 
-        <div class="split">
+        <div class="panel">
+          <div class="panel-head">
+            <h2>配置列表</h2>
+            <span class="tag blue" id="configCount">0 条</span>
+          </div>
+          <div class="panel-body">
+            <table>
+              <thead>
+                <tr>
+                  <th style="width: 156px;">配置名称</th>
+                  <th style="width: 92px;">组织</th>
+                  <th style="width: 110px;">配送中心</th>
+                  <th style="width: 92px;">分类</th>
+                  <th style="width: 82px;">置顶数</th>
+                  <th style="width: 150px;">生效时间</th>
+                  <th style="width: 80px;">状态</th>
+                  <th style="width: 142px;">操作</th>
+                </tr>
+              </thead>
+              <tbody id="configTbody"></tbody>
+            </table>
+          </div>
+        </div>
+      </section>
+
+      <section id="configEditView" class="view">
+        <div class="toolbar">
+          <div class="title-block">
+            <h1 id="configPageTitle">新增置顶配置</h1>
+            <div class="subtitle">一个配置可维护多个分类，每个分类下独立维护置顶商品和排序</div>
+          </div>
+          <div class="actions">
+            <button class="btn" id="backConfigListBtn">返回列表</button>
+            <button class="btn primary" id="saveConfigPageBtn">保存配置</button>
+          </div>
+        </div>
+
+        <div class="detail-shell">
           <div class="panel">
-            <div class="panel-head">
-              <h2>配置列表</h2>
-              <span class="tag blue" id="configCount">0 条</span>
-            </div>
+            <div class="panel-head"><h2>基础信息</h2></div>
             <div class="panel-body">
-              <table>
-                <thead>
-                  <tr>
-                    <th style="width: 156px;">配置名称</th>
-                    <th style="width: 92px;">组织</th>
-                    <th style="width: 110px;">发货仓</th>
-                    <th style="width: 92px;">分类</th>
-                    <th style="width: 82px;">置顶数</th>
-                    <th style="width: 150px;">生效时间</th>
-                    <th style="width: 80px;">状态</th>
-                    <th style="width: 142px;">操作</th>
-                  </tr>
-                </thead>
-                <tbody id="configTbody"></tbody>
-              </table>
+              <div class="form-grid">
+                <div class="field span-3">
+                  <label>配置名称</label>
+                  <input id="formName" value="乳品冷链默认排序置顶配置" />
+                </div>
+                <div class="field">
+                  <label>二级组织</label>
+                  <select id="formOrg">
+                    <option>万昌集团</option>
+                    <option>华东事业部</option>
+                  </select>
+                </div>
+                <div class="field span-2">
+                  <label>配送中心</label>
+                  <div class="multi-select">
+                    <div class="chip-list" id="warehouseChips"></div>
+                    <button class="icon-btn" id="openWarehousePickerBtn" aria-label="选择配送中心">⌄</button>
+                  </div>
+                </div>
+                <div class="field">
+                  <label>生效开始时间</label>
+                  <input id="formStart" value="2026-06-30" />
+                </div>
+                <div class="field">
+                  <label>生效结束时间</label>
+                  <input id="formEnd" value="长期" />
+                </div>
+                <div class="field span-3">
+                  <label>备注</label>
+                  <textarea id="formRemark">试点分类默认排序，置顶 A 级重点商品。</textarea>
+                </div>
+              </div>
             </div>
           </div>
 
           <div class="panel">
             <div class="panel-head">
-              <h2>门店排序预览</h2>
-              <select id="previewStore" style="width: 148px;">
-                <option value="tc">天长门店</option>
-                <option value="cn">城南门店</option>
-                <option value="xk">新开门店</option>
-              </select>
+              <h2>分类置顶商品</h2>
+              <div class="actions">
+                <span class="tag blue" id="categoryGroupCount">0 个分类</span>
+                <button class="btn primary" id="addCategoryGroupBtn">新增分类</button>
+              </div>
             </div>
             <div class="panel-body">
-              <div class="summary-grid" style="margin-bottom: 10px;">
-                <div class="metric">
-                  <strong id="pinnedVisible">0</strong>
-                  <span>可见置顶 SKU</span>
-                </div>
-                <div class="metric">
-                  <strong id="pinnedFiltered">0</strong>
-                  <span>被过滤 SKU</span>
-                </div>
-              </div>
-              <div id="adminPreviewList" class="preview-list"></div>
+              <table>
+                <thead>
+                  <tr>
+                    <th style="width: 72px;">分类排序</th>
+                    <th style="width: 180px;">商品分类</th>
+                    <th>置顶商品</th>
+                    <th style="width: 190px;">操作</th>
+                  </tr>
+                </thead>
+                <tbody id="categoryGroupTbody"></tbody>
+              </table>
             </div>
           </div>
         </div>
@@ -1292,94 +1495,127 @@
     </main>
   </div>
 
-  <div class="drawer-mask" id="drawerMask">
-    <div class="drawer" role="dialog" aria-modal="true" aria-labelledby="drawerTitle">
-      <div class="drawer-head">
-        <h2 id="drawerTitle">新增置顶配置</h2>
-        <button class="icon-btn" id="closeDrawerBtn" aria-label="关闭">×</button>
+  <div class="modal-mask" id="warehouseModalMask">
+    <div class="modal small" role="dialog" aria-modal="true" aria-labelledby="warehouseModalTitle">
+      <div class="modal-head">
+        <h2 id="warehouseModalTitle">选择配送中心</h2>
+        <button class="icon-btn" id="closeWarehouseModalBtn" aria-label="关闭">×</button>
       </div>
-      <div class="drawer-body">
-        <div class="panel">
-          <div class="panel-head"><h2>基础信息</h2></div>
-          <div class="panel-body">
-            <div class="form-grid">
-              <div class="field span-3">
-                <label>配置名称</label>
-                <input id="formName" value="乳品冷链默认排序置顶配置" />
-              </div>
-              <div class="field">
-                <label>二级组织</label>
-                <select id="formOrg">
-                  <option>万昌集团</option>
-                  <option>华东事业部</option>
-                </select>
-              </div>
-              <div class="field">
-                <label>发货仓 / 配送中心</label>
-                <select id="formWarehouse">
-                  <option>合肥冷链仓</option>
-                  <option>南京常温仓</option>
-                </select>
-              </div>
-              <div class="field">
-                <label>商品分类</label>
-                <select id="formCategory">
-                  <option value="cold">乳品冷链</option>
-                  <option value="fresh">鲜食烘焙</option>
-                </select>
-              </div>
-              <div class="field">
-                <label>生效开始时间</label>
-                <input id="formStart" value="2026-06-30 00:00" />
-              </div>
-              <div class="field">
-                <label>生效结束时间</label>
-                <input id="formEnd" value="长期" />
-              </div>
-              <div class="field">
-                <label>置顶上限</label>
-                <input id="formLimit" value="10" />
-              </div>
-              <div class="field span-3">
-                <label>备注</label>
-                <textarea id="formRemark">试点分类默认排序，置顶 A 级重点商品。</textarea>
-              </div>
-            </div>
-          </div>
-        </div>
+      <div class="modal-body">
+        <div class="choice-list" id="warehouseChoiceList"></div>
+      </div>
+      <div class="modal-foot">
+        <button class="btn" id="cancelWarehouseModalBtn">取消</button>
+        <button class="btn primary" id="confirmWarehouseModalBtn">确定</button>
+      </div>
+    </div>
+  </div>
 
-        <div class="panel">
-          <div class="panel-head">
-            <h2>置顶商品明细</h2>
-            <span class="tag blue" id="drawerSkuCount">0 / 10</span>
-          </div>
-          <div class="panel-body">
-            <div class="sku-pool" style="margin-bottom: 10px;">
-              <div class="field">
-                <label>添加商品</label>
-                <select id="skuSelect"></select>
-              </div>
-              <button class="btn primary" id="addSkuBtn">添加</button>
+  <div class="modal-mask" id="categoryModalMask">
+    <div class="modal small" role="dialog" aria-modal="true" aria-labelledby="categoryModalTitle">
+      <div class="modal-head">
+        <h2 id="categoryModalTitle">选择分类</h2>
+        <button class="icon-btn" id="closeCategoryModalBtn" aria-label="关闭">×</button>
+      </div>
+      <div class="modal-body">
+        <div class="field">
+          <label>商品分类</label>
+          <select id="categoryPickerSelect"></select>
+        </div>
+        <div class="notice" id="categoryPickerNotice">已加入当前配置的分类不可重复选择。</div>
+      </div>
+      <div class="modal-foot">
+        <button class="btn" id="cancelCategoryModalBtn">取消</button>
+        <button class="btn primary" id="confirmCategoryModalBtn">确定</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="modal-mask" id="productModalMask">
+    <div class="modal wide" role="dialog" aria-modal="true" aria-labelledby="productModalTitle">
+      <div class="modal-head">
+        <h2 id="productModalTitle">选择置顶商品</h2>
+        <button class="icon-btn" id="closeProductModalBtn" aria-label="关闭">×</button>
+      </div>
+      <div class="modal-body">
+        <div class="picker-grid">
+          <div class="picker-box">
+            <div class="picker-box-head">
+              <span>可选商品</span>
+              <span class="tag gray" id="availableProductCount">0 个</span>
             </div>
-            <table>
-              <thead>
-                <tr>
-                  <th style="width: 52px;">顺序</th>
-                  <th>商品</th>
-                  <th style="width: 68px;">ABC</th>
-                  <th style="width: 84px;">PSD</th>
-                  <th style="width: 74px;">状态</th>
-                  <th style="width: 112px;">操作</th>
-                </tr>
-              </thead>
-              <tbody id="drawerSkuTbody"></tbody>
-            </table>
+            <div class="picker-box-body">
+              <table>
+                <thead>
+                  <tr>
+                    <th>商品</th>
+                    <th style="width: 76px;">操作</th>
+                  </tr>
+                </thead>
+                <tbody id="availableProductTbody"></tbody>
+              </table>
+            </div>
+          </div>
+          <div class="picker-box">
+            <div class="picker-box-head">
+              <span>已置顶商品</span>
+              <span class="tag blue" id="selectedProductCount">0 个</span>
+            </div>
+            <div class="picker-box-body">
+              <table>
+                <thead>
+                  <tr>
+                    <th style="width: 52px;">顺序</th>
+                    <th>商品</th>
+                    <th style="width: 120px;">操作</th>
+                  </tr>
+                </thead>
+                <tbody id="selectedProductTbody"></tbody>
+              </table>
+            </div>
           </div>
         </div>
       </div>
-      <div class="drawer-foot">
-        <button class="btn" id="cancelDrawerBtn">取消</button>
-        <button class="btn primary" id="saveConfigBtn">保存配置</button>
+      <div class="modal-foot">
+        <button class="btn primary" id="confirmProductModalBtn">完成</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="modal-mask" id="previewModalMask">
+    <div class="modal" role="dialog" aria-modal="true" aria-labelledby="previewModalTitle">
+      <div class="modal-head">
+        <h2 id="previewModalTitle">门店排序预览</h2>
+        <button class="icon-btn" id="closePreviewModalBtn" aria-label="关闭">×</button>
+      </div>
+      <div class="modal-body">
+        <div class="preview-query">
+          <div class="field">
+            <label>门店</label>
+            <select id="previewStore">
+              <option value="tc">天长门店</option>
+              <option value="cn">城南门店</option>
+              <option value="xk">新开门店</option>
+            </select>
+          </div>
+          <button class="btn primary" id="previewQueryBtn">查询</button>
+        </div>
+        <div class="summary-grid">
+          <div class="metric">
+            <strong id="pinnedVisible">0</strong>
+            <span>可见置顶 SKU</span>
+          </div>
+          <div class="metric">
+            <strong id="pinnedFiltered">0</strong>
+            <span>被过滤 SKU</span>
+          </div>
+        </div>
+        <div id="adminPreviewList" class="preview-list">
+          <div class="preview-item">请选择门店后点击查询，查看该门店默认排序结果。</div>
+        </div>
+      </div>
+      <div class="modal-foot">
+        <button class="btn" id="cancelPreviewModalBtn">关闭</button>
       </div>
     </div>
   </div>
@@ -1393,13 +1629,19 @@
       xk: { name: "新开门店", code: "ST099" }
     };
 
+    const warehouses = ["合肥冷链仓", "南京常温仓", "上海鲜食仓"];
+
     const categoryNames = {
       cold: "乳品冷链",
       fresh: "鲜食烘焙",
+      snack: "休闲零食",
+      noodle: "方便速食",
       endcap: "端堆商品",
       special: "特价专区",
       overdue: "超期未订"
     };
+
+    const configurableCategories = ["cold", "fresh", "snack", "noodle"];
 
     const products = [
       { id: "P001", name: "鲜牛奶 950ml", category: "cold", abc: "A", psd: { tc: 2380, cn: 1960, xk: 1180 }, price: 12.8, stock: { tc: 88, cn: 42, xk: 30 }, created: "2026-03-12", visible: {}, glyph: "奶" },
@@ -1410,6 +1652,14 @@
       { id: "P006", name: "冷萃咖啡奶 300ml", category: "cold", abc: "", psd: { tc: 0, cn: 0, xk: 0 }, price: 9.9, stock: { tc: 40, cn: 20, xk: 14 }, created: "2026-06-21", visible: {}, glyph: "新" },
       { id: "P007", name: "草莓酸奶饮品", category: "cold", abc: "C", psd: { tc: 680, cn: 520, xk: 230 }, price: 6.6, stock: { tc: 35, cn: 22, xk: 8 }, created: "2026-05-02", visible: { cn: "门店停售" }, glyph: "莓" },
       { id: "P008", name: "无糖希腊酸奶", category: "cold", abc: "", psd: { tc: 0, cn: 0, xk: 0 }, price: 13.6, stock: { tc: 20, cn: 16, xk: 10 }, created: "2026-06-25", visible: {}, glyph: "希" },
+      { id: "F001", name: "现烤牛角包", category: "fresh", abc: "A", psd: { tc: 1760, cn: 1520, xk: 820 }, price: 8.9, stock: { tc: 48, cn: 36, xk: 16 }, created: "2026-05-18", visible: {}, glyph: "烘" },
+      { id: "F002", name: "鸡蛋三明治", category: "fresh", abc: "A", psd: { tc: 1680, cn: 1400, xk: 760 }, price: 12.9, stock: { tc: 42, cn: 28, xk: 12 }, created: "2026-05-22", visible: {}, glyph: "鲜" },
+      { id: "F003", name: "奥尔良饭团", category: "fresh", abc: "B", psd: { tc: 980, cn: 1120, xk: 430 }, price: 6.9, stock: { tc: 60, cn: 44, xk: 22 }, created: "2026-04-28", visible: {}, glyph: "饭" },
+      { id: "F004", name: "鲜切水果杯", category: "fresh", abc: "B", psd: { tc: 860, cn: 920, xk: 380 }, price: 15.8, stock: { tc: 24, cn: 20, xk: 8 }, created: "2026-06-03", visible: { xk: "门店无经营范围" }, glyph: "果" },
+      { id: "K001", name: "原味薯片 90g", category: "snack", abc: "A", psd: { tc: 1320, cn: 1180, xk: 520 }, price: 7.9, stock: { tc: 92, cn: 84, xk: 38 }, created: "2026-03-08", visible: {}, glyph: "薯" },
+      { id: "K002", name: "夹心饼干 120g", category: "snack", abc: "B", psd: { tc: 880, cn: 760, xk: 420 }, price: 6.5, stock: { tc: 78, cn: 66, xk: 32 }, created: "2026-02-12", visible: {}, glyph: "饼" },
+      { id: "N001", name: "红烧牛肉面", category: "noodle", abc: "A", psd: { tc: 1540, cn: 1420, xk: 660 }, price: 5.2, stock: { tc: 120, cn: 108, xk: 56 }, created: "2026-01-22", visible: {}, glyph: "面" },
+      { id: "N002", name: "酸辣粉桶装", category: "noodle", abc: "B", psd: { tc: 940, cn: 820, xk: 390 }, price: 6.8, stock: { tc: 76, cn: 60, xk: 28 }, created: "2026-02-04", visible: {}, glyph: "粉" },
       { id: "E001", name: "端架1号 纯牛奶", category: "endcap", abc: "A", psd: { tc: 2380, cn: 1960, xk: 1180 }, price: 12.8, stock: { tc: 88, cn: 42, xk: 30 }, endcapNo: 1, created: "2026-03-12", visible: {}, glyph: "端" },
       { id: "E002", name: "地堆2号 酸奶组合", category: "endcap", abc: "B", psd: { tc: 1430, cn: 1320, xk: 620 }, price: 39.9, stock: { tc: 40, cn: 52, xk: 18 }, endcapNo: 2, created: "2026-02-18", visible: {}, glyph: "堆" },
       { id: "E003", name: "端架3号 儿童奶", category: "endcap", abc: "B", psd: { tc: 1280, cn: 990, xk: 510 }, price: 5.6, stock: { tc: 24, cn: 15, xk: 0 }, endcapNo: 3, created: "2026-01-10", visible: {}, glyph: "端" },
@@ -1423,47 +1673,59 @@
     let configs = [
       {
         id: "SORT20260627001",
-        name: "乳品冷链默认排序置顶配置",
+        name: "冷链鲜食默认排序置顶配置",
         org: "万昌集团",
-        warehouse: "合肥冷链仓",
-        category: "cold",
+        warehouses: ["合肥冷链仓", "南京常温仓"],
         status: "生效中",
         start: "2026-06-30",
         end: "长期",
-        limit: 10,
-        pinned: ["P002", "P001", "P006", "P004"],
+        remark: "试点分类默认排序，支持多分类置顶商品。",
+        categoryGroups: [
+          { category: "cold", pinned: ["P002", "P001", "P006", "P004"] },
+          { category: "fresh", pinned: ["F001", "F002"] }
+        ],
         updatedBy: "王敏",
         updatedAt: "2026-06-27 21:10"
       },
       {
         id: "SORT20260627002",
-        name: "鲜食烘焙默认排序置顶配置",
+        name: "南京常温默认排序置顶配置",
         org: "万昌集团",
-        warehouse: "南京常温仓",
-        category: "fresh",
+        warehouses: ["南京常温仓"],
         status: "待生效",
         start: "2026-07-01",
         end: "长期",
-        limit: 10,
-        pinned: [],
+        remark: "常温仓试点配置。",
+        categoryGroups: [
+          { category: "snack", pinned: ["K001", "K002"] },
+          { category: "noodle", pinned: ["N001"] }
+        ],
         updatedBy: "马正安",
         updatedAt: "2026-06-27 18:40"
       }
     ];
 
     let logs = [
-      { time: "2026-06-27 21:10", type: "配置保存", text: "乳品冷链默认排序置顶配置 更新置顶商品 4 个", status: "成功" },
+      { time: "2026-06-27 21:10", type: "配置保存", text: "冷链鲜食默认排序置顶配置 更新 2 个分类、6 个置顶商品", status: "成功" },
       { time: "2026-06-24 04:00", type: "定时任务", text: "ABC等级与近28天平均PSD刷新完成，覆盖 18,240 个商品", status: "成功" },
       { time: "2026-06-17 04:00", type: "定时任务", text: "BI PSD接口短暂超时，已保留上一版可用排序", status: "兜底" }
     ];
 
     let selectedConfigId = configs[0].id;
     let editingConfig = null;
+    let tempWarehouses = [];
+    let currentProductCategory = "";
     let activeAppCategory = "cold";
     let activeSort = "default";
 
     const $ = (selector) => document.querySelector(selector);
     const $$ = (selector) => Array.from(document.querySelectorAll(selector));
+
+    configs = configs.map(normalizeConfig);
+
+    function clone(value) {
+      return JSON.parse(JSON.stringify(value));
+    }
 
     function getProduct(id) {
       return products.find((item) => item.id === id);
@@ -1480,8 +1742,55 @@
       return { A: 1, B: 2, C: 3, "": 4 }[abc] || 4;
     }
 
+    function normalizeConfig(config) {
+      const normalizedWarehouses = Array.isArray(config.warehouses) ? config.warehouses.slice() : (config.warehouse ? [config.warehouse] : []);
+      const normalizedGroups = Array.isArray(config.categoryGroups) ? config.categoryGroups : (config.category ? [{ category: config.category, pinned: config.pinned || [] }] : []);
+      const groups = normalizedGroups.map((group) => ({
+        category: group.category,
+        pinned: Array.isArray(group.pinned) ? group.pinned.slice() : []
+      }));
+      return {
+        ...config,
+        warehouses: normalizedWarehouses,
+        warehouse: normalizedWarehouses[0] || "",
+        categoryGroups: groups,
+        category: groups[0]?.category || "",
+        pinned: groups[0]?.pinned || []
+      };
+    }
+
+    function getConfigWarehouses(config) {
+      if (!config) return [];
+      return Array.isArray(config.warehouses) ? config.warehouses : (config.warehouse ? [config.warehouse] : []);
+    }
+
+    function getConfigGroups(config) {
+      if (!config) return [];
+      if (Array.isArray(config.categoryGroups)) return config.categoryGroups;
+      return config.category ? [{ category: config.category, pinned: config.pinned || [] }] : [];
+    }
+
+    function getPinnedIdsForCategory(config, category) {
+      const group = getConfigGroups(config).find((item) => item.category === category);
+      return group?.pinned || [];
+    }
+
+    function categoryText(config) {
+      return getConfigGroups(config).map((group) => categoryNames[group.category] || group.category).join("、") || "-";
+    }
+
+    function warehouseText(config) {
+      const list = getConfigWarehouses(config);
+      return list.length ? list.join("、") : "组织维度";
+    }
+
+    function totalPinnedCount(config) {
+      return getConfigGroups(config).reduce((sum, group) => sum + group.pinned.length, 0);
+    }
+
     function getActiveConfig(category = "cold", warehouse = "合肥冷链仓") {
-      return configs.find((config) => config.status === "生效中" && config.category === category && config.warehouse === warehouse) || configs.find((config) => config.status === "生效中" && config.category === category);
+      const matched = configs.filter((config) => config.status === "生效中" && getConfigGroups(config).some((group) => group.category === category));
+      return matched.find((config) => getConfigWarehouses(config).includes(warehouse)) || matched[0];
     }
 
     function isVisible(product, storeKey) {
@@ -1518,7 +1827,7 @@
       }
 
       const config = getActiveConfig(category, warehouse);
-      const pinnedIds = config?.pinned || [];
+      const pinnedIds = getPinnedIdsForCategory(config, category);
       const pinned = pinnedIds.map(getProduct).filter(Boolean).filter((item) => item.category === category && isVisible(item, storeKey));
       const pinnedSet = new Set(pinned.map((item) => item.id));
       const normal = base.filter((item) => !pinnedSet.has(item.id)).sort((a, b) => {
@@ -1542,20 +1851,23 @@
 
     function renderTabs() {
       $$(".tab").forEach((tab) => {
-        tab.addEventListener("click", () => {
-          $$(".tab").forEach((item) => item.classList.remove("active"));
-          $$(".view").forEach((item) => item.classList.remove("active"));
-          tab.classList.add("active");
-          $("#" + tab.dataset.view).classList.add("active");
-          if (tab.dataset.view === "appView") renderApp();
-          if (tab.dataset.view === "logView") renderLogs();
-        });
+        tab.addEventListener("click", () => showView(tab.dataset.view));
       });
     }
 
+    function showView(viewId) {
+      $$(".view").forEach((item) => item.classList.remove("active"));
+      $("#" + viewId).classList.add("active");
+      $$(".tab").forEach((item) => item.classList.remove("active"));
+      const tab = $(`.tab[data-view="${viewId}"]`) || $(".tab[data-view='adminView']");
+      tab?.classList.add("active");
+      if (viewId === "appView") renderApp();
+      if (viewId === "logView") renderLogs();
+      if (viewId === "adminView") renderConfigs();
+    }
+
     function switchTo(viewId) {
-      const tab = $(`.tab[data-view="${viewId}"]`);
-      if (tab) tab.click();
+      showView(viewId);
     }
 
     function renderConfigs() {
@@ -1564,8 +1876,8 @@
       const warehouse = $("#filterWarehouse").value;
       const rows = configs.filter((config) => {
         if (status && config.status !== status) return false;
-        if (category && config.category !== category) return false;
-        if (warehouse && config.warehouse !== warehouse) return false;
+        if (category && !getConfigGroups(config).some((group) => group.category === category)) return false;
+        if (warehouse && !getConfigWarehouses(config).includes(warehouse)) return false;
         return true;
       });
 
@@ -1574,9 +1886,9 @@
         <tr class="${config.id === selectedConfigId ? "selected" : ""}">
           <td><button class="link" data-open-config="${config.id}" title="${config.id}">${config.name || config.id}</button></td>
           <td>${config.org}</td>
-          <td>${config.warehouse || "组织维度"}</td>
-          <td>${categoryNames[config.category]}</td>
-          <td>${config.pinned.length} / ${config.limit}</td>
+          <td>${warehouseText(config)}</td>
+          <td>${categoryText(config)}</td>
+          <td>${totalPinnedCount(config)} 个</td>
           <td>${config.start} - ${config.end}</td>
           <td>${statusTag(config.status)}</td>
           <td>
@@ -1592,14 +1904,15 @@
       $$("[data-open-config]").forEach((button) => {
         button.addEventListener("click", () => {
           selectedConfigId = button.dataset.openConfig;
-          renderConfigs();
-          renderAdminPreview();
-          openDrawer(button.dataset.openConfig);
+          openConfigPage(button.dataset.openConfig);
         });
       });
 
       $$("[data-edit-config]").forEach((button) => {
-        button.addEventListener("click", () => openDrawer(button.dataset.editConfig));
+        button.addEventListener("click", () => {
+          selectedConfigId = button.dataset.editConfig;
+          openConfigPage(button.dataset.editConfig);
+        });
       });
 
       $$("[data-stop-config]").forEach((button) => {
@@ -1607,7 +1920,7 @@
           const config = configs.find((item) => item.id === button.dataset.stopConfig);
           if (!config) return;
           config.status = "已停用";
-          logs.unshift({ time: nowText(), type: "停用配置", text: `${config.id} 已停用`, status: "成功" });
+          logs.unshift({ time: nowText(), type: "停用配置", text: `${config.name || config.id} 已停用`, status: "成功" });
           showToast("配置已停用");
           renderConfigs();
           renderAdminPreview();
@@ -1619,14 +1932,14 @@
         button.addEventListener("click", () => {
           const source = configs.find((item) => item.id === button.dataset.copyConfig);
           if (!source) return;
-          const copied = {
-            ...source,
+          const copied = normalizeConfig({
+            ...clone(source),
             id: `SORT${Date.now().toString().slice(-10)}`,
             name: `${source.name || source.id} 副本`,
             status: "待生效",
             updatedBy: "当前用户",
             updatedAt: nowText()
-          };
+          });
           configs.unshift(copied);
           selectedConfigId = copied.id;
           logs.unshift({ time: nowText(), type: "复制配置", text: `${source.name || source.id} 已复制为 ${copied.name}`, status: "成功" });
@@ -1643,35 +1956,62 @@
       return `<span class="tag gray">${status}</span>`;
     }
 
+    function resetAdminPreview() {
+      $("#pinnedVisible").textContent = "0";
+      $("#pinnedFiltered").textContent = "0";
+      $("#adminPreviewList").innerHTML = `<div class="preview-item">请选择门店后点击查询，查看该门店默认排序结果。</div>`;
+    }
+
+    function openPreviewModal(runQuery = false) {
+      $("#previewModalMask").classList.add("show");
+      if (runQuery) renderAdminPreview();
+      else resetAdminPreview();
+    }
+
+    function closePreviewModal() {
+      $("#previewModalMask").classList.remove("show");
+    }
+
     function renderAdminPreview() {
       const storeKey = $("#previewStore").value;
       const config = configs.find((item) => item.id === selectedConfigId) || configs[0];
       if (!config) return;
-      const visible = [];
-      const filtered = [];
-      config.pinned.map(getProduct).filter(Boolean).forEach((product) => {
-        if (isVisible(product, storeKey)) visible.push(product);
-        else filtered.push({ product, reason: visibilityReason(product, storeKey) });
-      });
+      const groups = getConfigGroups(config);
+      const warehouse = getConfigWarehouses(config)[0] || "合肥冷链仓";
+      let visibleCount = 0;
+      let filteredCount = 0;
 
-      $("#pinnedVisible").textContent = visible.length;
-      $("#pinnedFiltered").textContent = filtered.length;
-      const sorted = getSortedProducts(config.category, storeKey, "default", config.warehouse).slice(0, 6);
-      const visibleHtml = sorted.map((product) => `
-        <div class="preview-item">
-          <div><strong>${product.position}. ${product.name}</strong> ${sourceTag(product.source)}</div>
-          <div class="muted">ABC：${product.abc || "未分级"}；近28天平均PSD：${product.psd[storeKey] || "-"}；库存：${product.stock[storeKey] || 0}</div>
-        </div>
-      `).join("");
+      const html = groups.map((group) => {
+        const pinned = group.pinned.map(getProduct).filter(Boolean);
+        const filtered = pinned.filter((product) => !isVisible(product, storeKey)).map((product) => ({ product, reason: visibilityReason(product, storeKey) }));
+        visibleCount += pinned.length - filtered.length;
+        filteredCount += filtered.length;
+        const sorted = getSortedProducts(group.category, storeKey, "default", warehouse).slice(0, 6);
+        const sortedHtml = sorted.map((product) => `
+          <div class="preview-item">
+            <div><strong>${product.position}. ${product.name}</strong> ${sourceTag(product.source)}</div>
+            <div class="muted">分类：${categoryNames[group.category]}；库存：${product.stock[storeKey] || 0}；门店：${stores[storeKey].name}</div>
+          </div>
+        `).join("");
+        const filteredHtml = filtered.map(({ product, reason }) => `
+          <div class="preview-item filtered">
+            <div><strong>${categoryNames[group.category]} / ${product.name}</strong> <span class="tag red">不展示</span></div>
+            <div class="muted">过滤原因：${reason}。后台配置仍保留，其他门店如可见则继续置顶。</div>
+          </div>
+        `).join("");
+        return `
+          <div class="preview-item">
+            <strong>${categoryNames[group.category]}</strong>
+            <div class="table-meta">以下展示该分类按当前门店过滤后的前 6 个默认排序结果。</div>
+          </div>
+          ${sortedHtml || `<div class="preview-item">该分类暂无可预览商品</div>`}
+          ${filteredHtml}
+        `;
+      }).join("");
 
-      const filteredHtml = filtered.map(({ product, reason }) => `
-        <div class="preview-item filtered">
-          <div><strong>${product.name}</strong> <span class="tag red">不展示</span></div>
-          <div class="muted">过滤原因：${reason}。后台配置仍保留，其他门店如可见则继续置顶。</div>
-        </div>
-      `).join("");
-
-      $("#adminPreviewList").innerHTML = visibleHtml + filteredHtml || `<div class="preview-item">暂无可预览商品</div>`;
+      $("#pinnedVisible").textContent = visibleCount;
+      $("#pinnedFiltered").textContent = filteredCount;
+      $("#adminPreviewList").innerHTML = html || `<div class="preview-item">暂无可预览商品</div>`;
     }
 
     function sourceTag(source) {
@@ -1682,121 +2022,290 @@
       return `<span class="tag gray">${source}</span>`;
     }
 
-    function openDrawer(configId) {
+    function openConfigPage(configId) {
       const source = configs.find((item) => item.id === configId);
-      editingConfig = source ? JSON.parse(JSON.stringify(source)) : {
+      editingConfig = source ? normalizeConfig(clone(source)) : normalizeConfig({
         id: `SORT${Date.now().toString().slice(-10)}`,
-        name: "乳品冷链默认排序置顶配置",
+        name: "默认排序置顶配置",
         org: "万昌集团",
-        warehouse: "合肥冷链仓",
-        category: "cold",
+        warehouses: ["合肥冷链仓"],
         status: "待生效",
         start: "2026-06-30",
         end: "长期",
-        limit: 10,
-        pinned: [],
+        remark: "",
+        categoryGroups: [],
         updatedBy: "当前用户",
         updatedAt: nowText()
-      };
+      });
 
-      $("#drawerTitle").textContent = source ? "编辑置顶配置" : "新增置顶配置";
+      $("#configPageTitle").textContent = source ? "编辑置顶配置" : "新增置顶配置";
       $("#formName").value = editingConfig.name || editingConfig.id;
       $("#formOrg").value = editingConfig.org;
-      $("#formWarehouse").value = editingConfig.warehouse;
-      $("#formCategory").value = editingConfig.category;
       $("#formStart").value = editingConfig.start;
       $("#formEnd").value = editingConfig.end;
-      $("#formLimit").value = editingConfig.limit;
-      renderSkuOptions();
-      renderDrawerSkus();
-      $("#drawerMask").classList.add("show");
+      $("#formRemark").value = editingConfig.remark || "";
+      renderWarehouseChips();
+      renderCategoryGroups();
+      showView("configEditView");
     }
 
-    function closeDrawer() {
-      $("#drawerMask").classList.remove("show");
+    function closeConfigPage() {
       editingConfig = null;
+      showView("adminView");
     }
 
-    function renderSkuOptions() {
+    function renderWarehouseChips() {
       if (!editingConfig) return;
-      const category = $("#formCategory").value;
-      const selected = new Set(editingConfig.pinned);
-      const options = products.filter((item) => item.category === category && !selected.has(item.id));
-      $("#skuSelect").innerHTML = options.map((item) => `<option value="${item.id}">${item.id} ${item.name} / ${item.abc || "未分级"} / PSD ${item.psd.tc || "-"}</option>`).join("");
+      const list = getConfigWarehouses(editingConfig);
+      $("#warehouseChips").innerHTML = list.length ? list.map((name) => `
+        <span class="chip">${name}<button type="button" data-remove-warehouse="${name}" aria-label="移除${name}">×</button></span>
+      `).join("") : `<span class="muted">请选择配送中心</span>`;
+
+      $$("[data-remove-warehouse]").forEach((button) => {
+        button.addEventListener("click", () => {
+          editingConfig.warehouses = getConfigWarehouses(editingConfig).filter((name) => name !== button.dataset.removeWarehouse);
+          renderWarehouseChips();
+        });
+      });
     }
 
-    function renderDrawerSkus() {
+    function openWarehouseModal() {
       if (!editingConfig) return;
-      const limit = Number($("#formLimit").value) || editingConfig.limit || 10;
-      $("#drawerSkuCount").textContent = `${editingConfig.pinned.length} / ${limit}`;
-      $("#drawerSkuTbody").innerHTML = editingConfig.pinned.map((id, index) => {
+      tempWarehouses = getConfigWarehouses(editingConfig).slice();
+      renderWarehouseChoices();
+      $("#warehouseModalMask").classList.add("show");
+    }
+
+    function closeWarehouseModal() {
+      $("#warehouseModalMask").classList.remove("show");
+    }
+
+    function renderWarehouseChoices() {
+      const selected = new Set(tempWarehouses);
+      $("#warehouseChoiceList").innerHTML = warehouses.map((name) => `
+        <label class="choice-row">
+          <input type="checkbox" value="${name}" ${selected.has(name) ? "checked" : ""} />
+          <span>${name}</span>
+        </label>
+      `).join("");
+
+      $$("#warehouseChoiceList input").forEach((input) => {
+        input.addEventListener("change", () => {
+          if (input.checked && !tempWarehouses.includes(input.value)) tempWarehouses.push(input.value);
+          if (!input.checked) tempWarehouses = tempWarehouses.filter((name) => name !== input.value);
+        });
+      });
+    }
+
+    function confirmWarehouseModal() {
+      if (!editingConfig) return;
+      editingConfig.warehouses = tempWarehouses.slice();
+      renderWarehouseChips();
+      closeWarehouseModal();
+    }
+
+    function renderCategoryGroups() {
+      if (!editingConfig) return;
+      const groups = getConfigGroups(editingConfig);
+      $("#categoryGroupCount").textContent = `${groups.length} 个分类`;
+      $("#categoryGroupTbody").innerHTML = groups.length ? groups.map((group, index) => {
+        const names = group.pinned.map(getProduct).filter(Boolean).map((product) => product.name);
+        const summary = names.length ? `${names.slice(0, 3).join("、")}${names.length > 3 ? ` 等 ${names.length} 个` : ""}` : "未选择商品";
+        return `
+          <tr>
+            <td>
+              <div class="inline-tools">
+                <span>${index + 1}</span>
+                <button class="icon-btn" data-move-category-up="${index}" ${index === 0 ? "disabled" : ""}>↑</button>
+                <button class="icon-btn" data-move-category-down="${index}" ${index === groups.length - 1 ? "disabled" : ""}>↓</button>
+              </div>
+            </td>
+            <td>${categoryNames[group.category] || group.category}</td>
+            <td>
+              <button class="link" data-open-products="${group.category}">${group.pinned.length} 个商品</button>
+              <div class="table-meta">${summary}</div>
+            </td>
+            <td>
+              <button class="link" data-open-products="${group.category}">选择商品</button>
+              <span class="muted"> | </span>
+              <button class="link" data-remove-category="${group.category}">删除分类</button>
+            </td>
+          </tr>
+        `;
+      }).join("") : `<tr><td class="empty-row" colspan="4">暂无分类，点击“新增分类”添加</td></tr>`;
+
+      $$("[data-move-category-up]").forEach((button) => {
+        button.addEventListener("click", () => {
+          const index = Number(button.dataset.moveCategoryUp);
+          const groups = getConfigGroups(editingConfig);
+          [groups[index - 1], groups[index]] = [groups[index], groups[index - 1]];
+          renderCategoryGroups();
+        });
+      });
+
+      $$("[data-move-category-down]").forEach((button) => {
+        button.addEventListener("click", () => {
+          const index = Number(button.dataset.moveCategoryDown);
+          const groups = getConfigGroups(editingConfig);
+          [groups[index + 1], groups[index]] = [groups[index], groups[index + 1]];
+          renderCategoryGroups();
+        });
+      });
+
+      $$("[data-open-products]").forEach((button) => {
+        button.addEventListener("click", () => openProductModal(button.dataset.openProducts));
+      });
+
+      $$("[data-remove-category]").forEach((button) => {
+        button.addEventListener("click", () => {
+          editingConfig.categoryGroups = getConfigGroups(editingConfig).filter((group) => group.category !== button.dataset.removeCategory);
+          renderCategoryGroups();
+        });
+      });
+    }
+
+    function openCategoryModal() {
+      if (!editingConfig) return;
+      const selected = new Set(getConfigGroups(editingConfig).map((group) => group.category));
+      const available = configurableCategories.filter((category) => !selected.has(category));
+      $("#categoryPickerSelect").innerHTML = available.map((category) => `<option value="${category}">${categoryNames[category]}</option>`).join("");
+      $("#categoryPickerSelect").disabled = !available.length;
+      $("#confirmCategoryModalBtn").disabled = !available.length;
+      $("#categoryPickerNotice").textContent = available.length ? "已加入当前配置的分类不可重复选择。" : "当前可配置分类已全部加入，不能重复选择。";
+      $("#categoryModalMask").classList.add("show");
+    }
+
+    function closeCategoryModal() {
+      $("#categoryModalMask").classList.remove("show");
+    }
+
+    function confirmCategoryModal() {
+      if (!editingConfig) return;
+      const category = $("#categoryPickerSelect").value;
+      if (!category) return;
+      editingConfig.categoryGroups.push({ category, pinned: [] });
+      renderCategoryGroups();
+      closeCategoryModal();
+    }
+
+    function openProductModal(category) {
+      currentProductCategory = category;
+      $("#productModalTitle").textContent = `${categoryNames[category] || category} - 选择置顶商品`;
+      renderProductPicker();
+      $("#productModalMask").classList.add("show");
+    }
+
+    function closeProductModal() {
+      $("#productModalMask").classList.remove("show");
+      currentProductCategory = "";
+      renderCategoryGroups();
+    }
+
+    function currentProductGroup() {
+      return getConfigGroups(editingConfig).find((group) => group.category === currentProductCategory);
+    }
+
+    function renderProductPicker() {
+      const group = currentProductGroup();
+      if (!group) return;
+      const selected = new Set(group.pinned);
+      const available = products.filter((product) => product.category === currentProductCategory && !selected.has(product.id));
+
+      $("#availableProductCount").textContent = `${available.length} 个`;
+      $("#selectedProductCount").textContent = `${group.pinned.length} 个`;
+      $("#availableProductTbody").innerHTML = available.length ? available.map((product) => `
+        <tr>
+          <td>${product.id} ${product.name}</td>
+          <td><button class="link" data-add-product="${product.id}">添加</button></td>
+        </tr>
+      `).join("") : `<tr><td class="empty-row" colspan="2">暂无可选商品</td></tr>`;
+
+      $("#selectedProductTbody").innerHTML = group.pinned.length ? group.pinned.map((id, index) => {
         const product = getProduct(id);
         if (!product) return "";
-        const abnormal = product.visible && Object.keys(product.visible).length > 0;
         return `
           <tr>
             <td>${index + 1}</td>
             <td>${product.id} ${product.name}</td>
-            <td>${product.abc || "未分级"}</td>
-            <td>${product.psd.tc || "-"}</td>
-            <td>${abnormal ? `<span class="tag amber">部分门店不可见</span>` : `<span class="tag green">正常</span>`}</td>
             <td>
-              <button class="icon-btn" data-move-up="${index}" ${index === 0 ? "disabled" : ""}>↑</button>
-              <button class="icon-btn" data-move-down="${index}" ${index === editingConfig.pinned.length - 1 ? "disabled" : ""}>↓</button>
-              <button class="icon-btn" data-remove-sku="${id}">×</button>
+              <div class="inline-tools">
+                <button class="icon-btn" data-move-product-up="${index}" ${index === 0 ? "disabled" : ""}>↑</button>
+                <button class="icon-btn" data-move-product-down="${index}" ${index === group.pinned.length - 1 ? "disabled" : ""}>↓</button>
+                <button class="icon-btn" data-remove-product="${id}">×</button>
+              </div>
             </td>
           </tr>
         `;
-      }).join("");
+      }).join("") : `<tr><td class="empty-row" colspan="3">暂无置顶商品</td></tr>`;
 
-      $$("[data-move-up]").forEach((button) => {
+      $$("[data-add-product]").forEach((button) => {
         button.addEventListener("click", () => {
-          const index = Number(button.dataset.moveUp);
-          const list = editingConfig.pinned;
-          [list[index - 1], list[index]] = [list[index], list[index - 1]];
-          renderDrawerSkus();
+          group.pinned.push(button.dataset.addProduct);
+          renderProductPicker();
         });
       });
 
-      $$("[data-move-down]").forEach((button) => {
+      $$("[data-move-product-up]").forEach((button) => {
         button.addEventListener("click", () => {
-          const index = Number(button.dataset.moveDown);
-          const list = editingConfig.pinned;
-          [list[index + 1], list[index]] = [list[index], list[index + 1]];
-          renderDrawerSkus();
+          const index = Number(button.dataset.moveProductUp);
+          [group.pinned[index - 1], group.pinned[index]] = [group.pinned[index], group.pinned[index - 1]];
+          renderProductPicker();
         });
       });
 
-      $$("[data-remove-sku]").forEach((button) => {
+      $$("[data-move-product-down]").forEach((button) => {
         button.addEventListener("click", () => {
-          editingConfig.pinned = editingConfig.pinned.filter((id) => id !== button.dataset.removeSku);
-          renderSkuOptions();
-          renderDrawerSkus();
+          const index = Number(button.dataset.moveProductDown);
+          [group.pinned[index + 1], group.pinned[index]] = [group.pinned[index], group.pinned[index + 1]];
+          renderProductPicker();
+        });
+      });
+
+      $$("[data-remove-product]").forEach((button) => {
+        button.addEventListener("click", () => {
+          group.pinned = group.pinned.filter((id) => id !== button.dataset.removeProduct);
+          renderProductPicker();
         });
       });
     }
 
-    function saveDrawer() {
+    function saveConfigPage() {
       if (!editingConfig) return;
-      editingConfig.name = $("#formName").value.trim() || editingConfig.id;
-      editingConfig.org = $("#formOrg").value;
-      editingConfig.warehouse = $("#formWarehouse").value;
-      editingConfig.category = $("#formCategory").value;
-      editingConfig.start = $("#formStart").value;
-      editingConfig.end = $("#formEnd").value;
-      editingConfig.limit = Number($("#formLimit").value) || 10;
-      editingConfig.updatedBy = "当前用户";
-      editingConfig.updatedAt = nowText();
+      const name = $("#formName").value.trim();
+      if (!name) {
+        showToast("请填写配置名称");
+        return;
+      }
+      if (!getConfigWarehouses(editingConfig).length) {
+        showToast("请选择配送中心");
+        return;
+      }
+      if (!getConfigGroups(editingConfig).length) {
+        showToast("请至少新增一个分类");
+        return;
+      }
 
-      const existingIndex = configs.findIndex((item) => item.id === editingConfig.id);
-      if (existingIndex >= 0) configs[existingIndex] = editingConfig;
-      else configs.unshift(editingConfig);
-      selectedConfigId = editingConfig.id;
-      logs.unshift({ time: nowText(), type: "保存配置", text: `${editingConfig.name} 保存置顶商品 ${editingConfig.pinned.length} 个`, status: "成功" });
-      closeDrawer();
+      const saved = normalizeConfig({
+        ...editingConfig,
+        name,
+        org: $("#formOrg").value,
+        start: $("#formStart").value,
+        end: $("#formEnd").value,
+        remark: $("#formRemark").value,
+        updatedBy: "当前用户",
+        updatedAt: nowText()
+      });
+
+      const existingIndex = configs.findIndex((item) => item.id === saved.id);
+      if (existingIndex >= 0) configs[existingIndex] = saved;
+      else configs.unshift(saved);
+      selectedConfigId = saved.id;
+      logs.unshift({ time: nowText(), type: "保存配置", text: `${saved.name} 保存 ${getConfigGroups(saved).length} 个分类、${totalPinnedCount(saved)} 个置顶商品`, status: "成功" });
+      editingConfig = null;
       renderConfigs();
       renderAdminPreview();
       renderApp();
+      showView("adminView");
       showToast("配置已保存");
     }
 
@@ -1896,36 +2405,24 @@
         $("#filterStatus").value = "";
         renderConfigs();
       });
-      $("#addConfigBtn").addEventListener("click", () => openDrawer());
-      $("#closeDrawerBtn").addEventListener("click", closeDrawer);
-      $("#cancelDrawerBtn").addEventListener("click", closeDrawer);
-      $("#saveConfigBtn").addEventListener("click", saveDrawer);
-      $("#previewStore").addEventListener("change", renderAdminPreview);
-      $("#adminPreviewBtn").addEventListener("click", renderAdminPreview);
+      $("#addConfigBtn").addEventListener("click", () => openConfigPage());
+      $("#backConfigListBtn").addEventListener("click", closeConfigPage);
+      $("#saveConfigPageBtn").addEventListener("click", saveConfigPage);
+      $("#openWarehousePickerBtn").addEventListener("click", openWarehouseModal);
+      $("#closeWarehouseModalBtn").addEventListener("click", closeWarehouseModal);
+      $("#cancelWarehouseModalBtn").addEventListener("click", closeWarehouseModal);
+      $("#confirmWarehouseModalBtn").addEventListener("click", confirmWarehouseModal);
+      $("#addCategoryGroupBtn").addEventListener("click", openCategoryModal);
+      $("#closeCategoryModalBtn").addEventListener("click", closeCategoryModal);
+      $("#cancelCategoryModalBtn").addEventListener("click", closeCategoryModal);
+      $("#confirmCategoryModalBtn").addEventListener("click", confirmCategoryModal);
+      $("#closeProductModalBtn").addEventListener("click", closeProductModal);
+      $("#confirmProductModalBtn").addEventListener("click", closeProductModal);
+      $("#closePreviewModalBtn").addEventListener("click", closePreviewModal);
+      $("#cancelPreviewModalBtn").addEventListener("click", closePreviewModal);
+      $("#previewQueryBtn").addEventListener("click", renderAdminPreview);
+      $("#adminPreviewBtn").addEventListener("click", () => openPreviewModal(false));
       $("#openLogBtn").addEventListener("click", () => switchTo("logView"));
-
-      $("#formCategory").addEventListener("change", () => {
-        if (!editingConfig) return;
-        editingConfig.category = $("#formCategory").value;
-        editingConfig.pinned = [];
-        renderSkuOptions();
-        renderDrawerSkus();
-      });
-
-      $("#formLimit").addEventListener("input", renderDrawerSkus);
-      $("#addSkuBtn").addEventListener("click", () => {
-        if (!editingConfig) return;
-        const limit = Number($("#formLimit").value) || 10;
-        const id = $("#skuSelect").value;
-        if (!id) return;
-        if (editingConfig.pinned.length >= limit) {
-          showToast("已达到置顶上限");
-          return;
-        }
-        editingConfig.pinned.push(id);
-        renderSkuOptions();
-        renderDrawerSkus();
-      });
 
       $("#appStore").addEventListener("change", renderApp);
       $("#appWarehouse").addEventListener("change", renderApp);
@@ -1941,8 +2438,8 @@
       });
       $("#syncPreviewBtn").addEventListener("click", () => {
         $("#previewStore").value = $("#appStore").value;
-        renderAdminPreview();
         switchTo("adminView");
+        openPreviewModal(true);
       });
 
       $$(".category-card").forEach((card) => {
@@ -1979,7 +2476,7 @@
     renderTabs();
     bindEvents();
     renderConfigs();
-    renderAdminPreview();
+    resetAdminPreview();
     renderApp();
     renderLogs();
   </script>
