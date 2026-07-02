@@ -1382,7 +1382,7 @@
             <div class="category-rail">
               <div class="category-card active" data-app-category="cold">
                 <strong>乳品冷链</strong>
-                <span>应用人工置顶 + ABC + PSD</span>
+                <span>应用人工置顶 + ABC + 均销</span>
               </div>
               <div class="category-card" data-app-category="endcap">
                 <strong>端堆商品</strong>
@@ -1398,7 +1398,7 @@
               </div>
             </div>
 
-            <div class="notice" id="sortNotice">当前为默认排序：人工置顶 > ABC等级 > 近28天平均PSD > 新品时间兜底。</div>
+            <div class="notice" id="sortNotice">当前为默认排序：人工置顶 > ABC等级 > 近28天均销。</div>
 
             <div class="panel">
               <div class="panel-head">
@@ -1473,11 +1473,10 @@
             </div>
             <div class="panel-body">
               <ul class="rule-list">
-                <li><span class="rank">1</span><span>普通分类页先展示人工置顶商品；置顶商品按门店可见范围、停要 / 停售、经营范围和发货仓过滤。</span></li>
+                <li><span class="rank">1</span><span>选品页面的分类页优先展示人工置顶商品；置顶商品按照登录用户权限、停要、经营范围、发货仓补货范围过滤。</span></li>
                 <li><span class="rank">2</span><span>非置顶商品按 ABC 等级排序，A 高于 B，B 高于 C，未分级商品低于 C。</span></li>
-                <li><span class="rank">3</span><span>同等级商品按近 28 天销售额平均 PSD 降序，PSD 以 BI 口径为准。</span></li>
-                <li><span class="rank">4</span><span>无 ABC 分级商品按建档 / 上新时间兜底；该字段排序权重低，最终字段需评审确认。</span></li>
-                <li><span class="rank">5</span><span>端堆、特价、超期未订、搜索、采购车和结算页沿用既有排序，不套本规则。</span></li>
+                <li><span class="rank">3</span><span>同等级商品按近 28 天均销降序，PSD 以 BI 口径为准。</span></li>
+                <li><span class="rank">4</span><span>端堆、特价、超期未订、搜索、采购车和结算页沿用既有排序，不套本规则。</span></li>
               </ul>
             </div>
           </div>
@@ -1708,7 +1707,7 @@
 
     let logs = [
       { time: "2026-06-27 21:10", type: "配置保存", text: "冷链鲜食默认排序置顶配置 更新 2 个分类、6 个置顶商品", status: "成功" },
-      { time: "2026-06-24 04:00", type: "定时任务", text: "ABC等级与近28天平均PSD刷新完成，覆盖 18,240 个商品", status: "成功" },
+      { time: "2026-06-24 04:00", type: "定时任务", text: "ABC等级与近28天均销刷新完成，覆盖 18,240 个商品", status: "成功" },
       { time: "2026-06-17 04:00", type: "定时任务", text: "BI PSD接口短暂超时，已保留上一版可用排序", status: "兜底" }
     ];
 
@@ -1844,7 +1843,7 @@
       return pinned.map((item, index) => ({ ...item, source: "人工置顶", position: index + 1 })).concat(
         normal.map((item, index) => ({
           ...item,
-          source: item.abc ? "ABC+PSD" : "新品兜底",
+          source: item.abc ? "ABC+均销" : "未分级",
           position: pinned.length + index + 1
         }))
       );
@@ -2017,8 +2016,8 @@
 
     function sourceTag(source) {
       if (source === "人工置顶") return `<span class="tag blue">人工置顶</span>`;
-      if (source === "ABC+PSD") return `<span class="tag green">ABC+PSD</span>`;
-      if (source === "新品兜底") return `<span class="tag amber">新品兜底</span>`;
+      if (source === "ABC+均销") return `<span class="tag green">ABC+均销</span>`;
+      if (source === "未分级") return `<span class="tag gray">未分级</span>`;
       if (source === "手动排序") return `<span class="tag purple">手动排序</span>`;
       return `<span class="tag gray">${source}</span>`;
     }
@@ -2323,13 +2322,13 @@
       $("#resultCount").textContent = `${list.length} 个商品`;
 
       if (activeAppCategory === "cold" && sortMode === "default") {
-        $("#sortNotice").textContent = "当前为默认排序：人工置顶 > ABC等级 > 近28天平均PSD > 新品时间兜底。";
+        $("#sortNotice").textContent = "当前为默认排序：人工置顶 > ABC等级 > 近28天均销。";
       } else if (sortMode !== "default") {
         $("#sortNotice").textContent = "当前为用户手动排序，系统默认排序只在切回默认或重新进入分类后恢复。";
       } else if (activeAppCategory === "endcap") {
-        $("#sortNotice").textContent = "端堆商品沿用现有规则，按端架 / 地堆编号排序，不套 ABC + PSD。";
+        $("#sortNotice").textContent = "端堆商品沿用现有规则，按端架 / 地堆编号排序，不套 ABC + 均销。";
       } else if (activeAppCategory === "special") {
-        $("#sortNotice").textContent = "特价专区沿用现有规则，按特价时间排序，不套 ABC + PSD。";
+        $("#sortNotice").textContent = "特价专区沿用现有规则，按特价时间排序，不套 ABC + 均销。";
       } else {
         $("#sortNotice").textContent = "超期未订沿用现有规则，不套本次默认排序。";
       }
@@ -2376,8 +2375,8 @@
 
     function productSourceText(product, storeKey) {
       if (product.source === "人工置顶") return "后台置顶候选命中，且当前门店可见。";
-      if (product.source === "ABC+PSD") return `按 ${product.abc} 级 + PSD ${product.psd[storeKey]} 排序。`;
-      if (product.source === "新品兜底") return `未分级新品，按时间 ${product.created} 兜底。`;
+      if (product.source === "ABC+均销") return `按 ${product.abc} 级 + 近28天均销 ${product.psd[storeKey]} 排序。`;
+      if (product.source === "未分级") return "未分级商品排在 C 级之后，再按近28天均销和稳定顺序展示。";
       if (product.source === "端堆编号") return `端架 / 地堆编号：${product.endcapNo}`;
       if (product.source === "特价时间") return `特价时间：${product.specialTime}`;
       if (product.source === "超期未订") return `超期未订：${product.overdueDays} 天`;
@@ -2465,7 +2464,7 @@
       });
 
       $("#runJobBtn").addEventListener("click", () => {
-        logs.unshift({ time: nowText(), type: "定时任务", text: "模拟刷新 ABC 等级、近28天平均PSD 和排序缓存完成", status: "成功" });
+        logs.unshift({ time: nowText(), type: "定时任务", text: "模拟刷新 ABC 等级、近28天均销和排序缓存完成", status: "成功" });
         renderLogs();
         showToast("模拟任务执行成功");
       });
